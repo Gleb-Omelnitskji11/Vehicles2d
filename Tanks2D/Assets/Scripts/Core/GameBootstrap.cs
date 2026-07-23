@@ -1,32 +1,35 @@
 using Core.ServiceLocator;
 using Gameplay;
+using Gameplay.Spawners;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Core
 {
     public class GameBootstrap : MonoBehaviour
     {
-        [SerializeField] private LevelLoader _levelLoader;
+        [SerializeField] private MapLoader _mapLoader;
 
         private void Awake()
         {
-            IServiceLocator serviceLocator;
-            if(!Services.TryGet<IServiceLocator>(out serviceLocator))
+            if (!Services.TryGet<IServiceLocator>(out IServiceLocator serviceLocator))
             {
                 Debug.LogError("Service Locator could not be found.");
                 return;
             }
-            
-            serviceLocator.Register<LevelLoader>(_levelLoader);
-            serviceLocator.Register<PlayerSpawner>(new PlayerSpawner());
-            serviceLocator.Register<GameProgresor>(new GameProgresor());
+
+            serviceLocator.Register<MapLoader>(_mapLoader);
+            serviceLocator.Register<TanksRegister>(new TanksRegister());
+            serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
+            serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
+            serviceLocator.Register<GameProgress>(new GameProgress());
 
             StartGame();
         }
 
         private void StartGame()
         {
-            Services.Get<GameProgresor>().StartGame();
+            Services.Get<GameProgress>().StartGame();
         }
     }
 }

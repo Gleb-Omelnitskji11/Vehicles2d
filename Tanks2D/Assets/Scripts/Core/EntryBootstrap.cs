@@ -1,16 +1,33 @@
 using System;
+using System.Threading.Tasks;
+using Core.ServiceLocator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Core.ServiceLocator
+namespace Core
 {
     public class EntryBootstrap : MonoBehaviour
     {
         private void Start()
         {
-            var serviceLocator = new ServiceLocator();
-            serviceLocator.Register(serviceLocator);
+            Preloading();
+        }
+
+        private async void Preloading()
+        {
+            await Binding();
             LoadNextScene();
+        }
+
+        private async Task Binding()
+        {
+            IServiceLocator serviceLocator = new ServiceLocator.ServiceLocator();
+            serviceLocator.Register<IServiceLocator>(serviceLocator);
+            
+            ConfigProvider configProvider = new ConfigProvider();
+            serviceLocator.Register<ConfigProvider>(configProvider);
+
+            await configProvider.LoadConfigAsync();
         }
 
         private void LoadNextScene()

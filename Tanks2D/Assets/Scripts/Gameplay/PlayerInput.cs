@@ -18,7 +18,7 @@ namespace Gameplay
 
             float turn = Input.GetAxisRaw("Horizontal");
 
-            _movement.SetInput(move, turn);
+            _movement.Move(move, turn);
         }
     }
 }

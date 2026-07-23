@@ -1,10 +1,10 @@
 using Core.ServiceLocator;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.Spawners
 {
     public interface IPlayerSpawner : IService, IInit
     {
-        GameObject Spawn();
+        GameObject SpawnPlayer();
     }
 }

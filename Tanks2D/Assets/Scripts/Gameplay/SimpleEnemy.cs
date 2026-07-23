@@ -1,0 +1,129 @@
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+namespace Gameplay
+{
+    [RequireComponent(typeof(TankMovement))]
+    public class SimpleEnemy : MonoBehaviour
+    {
+        [Header("Direction")]
+        [SerializeField] private float _minDirectionChangeTime = 2f;
+        [SerializeField] private float _maxDirectionChangeTime = 5f;
+
+        [Header("Obstacle")]
+        [SerializeField] private float _forwardCheckDistance = 2f;
+        [SerializeField] private float _sideCheckDistance = 1.2f;
+        [SerializeField] private float _length = 0.37f;
+        [SerializeField] private LayerMask _obstacleMask;
+
+        [Header("Turning")]
+        [SerializeField] private float _turnDecisionAngle = 60f;
+        [SerializeField] private float _reverseUntilAngle = 60f;
+
+        private TankMovement _movement;
+
+        private Vector2 _targetDirection;
+        private float _timer;
+
+        private bool _avoiding;
+        private bool _backward;
+
+        private void Awake()
+        {
+            _obstacleMask = LayerMask.GetMask("Wall", "Enemy");
+            //_findMask = LayerMask.GetMask("Player");
+            _movement = GetComponent<TankMovement>();
+        }
+
+        private void Start()
+        {
+            PickRandomDirection();
+        }
+
+        private void Update()
+        {
+            _timer -= Time.deltaTime;
+
+            if (!_avoiding && _timer <= 0f)
+                PickRandomDirection();
+
+            HandleObstacle();
+
+            Move();
+        }
+
+        private void HandleObstacle()
+        {
+            bool front = Physics2D.Raycast(transform.position, transform.up, _forwardCheckDistance, _obstacleMask);
+
+            if (!front)
+            {
+                _avoiding = false;
+                return;
+            }
+
+            _avoiding = true;
+
+            Vector2 left = Quaternion.Euler(0, 0, 90) * transform.up;
+            Vector2 right = Quaternion.Euler(0, 0, -90) * transform.up;
+            bool leftBlocked = Physics2D.Raycast(transform.position, left, _sideCheckDistance, _obstacleMask);
+            bool rightBlocked = Physics2D.Raycast(transform.position, right, _sideCheckDistance, _obstacleMask);
+
+            if (!leftBlocked)
+            {
+                _targetDirection = left;
+                return;
+            }
+
+            if (!rightBlocked)
+            {
+                _targetDirection = right;
+                return;
+            }
+
+            _targetDirection = -transform.up;
+        }
+
+        private void Move()
+        {
+            float angle = Vector2.SignedAngle(transform.up, _targetDirection);
+            float turn = Mathf.Clamp(angle / _turnDecisionAngle, -1f, 1f);
+            float move = 1f;
+
+            if (_avoiding)
+            {
+                float absAngle = Mathf.Abs(angle);
+                var hit = Physics2D.Raycast(transform.position, transform.up, _forwardCheckDistance, _obstacleMask);
+                if (_backward || (absAngle > _reverseUntilAngle && hit.distance <= _length))
+                {
+                    _backward = true;
+                    move = -0.4f;
+                }
+            }
+
+            _movement.Move(move, turn);
+        }
+
+        private void PickRandomDirection()
+        {
+            _targetDirection = Random.insideUnitCircle.normalized;
+
+            _timer = Random.Range(_minDirectionChangeTime, _maxDirectionChangeTime);
+            _backward = false;
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(transform.position, transform.up * _forwardCheckDistance);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, 90) * transform.up * _sideCheckDistance);
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, -90) * transform.up * _sideCheckDistance);
+        }
+#endif
+    }
+}

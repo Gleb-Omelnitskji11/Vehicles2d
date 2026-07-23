@@ -9,19 +9,14 @@ namespace Core.ServiceLocator
     {
         private readonly Dictionary<Type, IService> _services = new Dictionary<Type, IService>();
         private readonly Dictionary<Type, Func<IService>> _factories = new Dictionary<Type, Func<IService>>();
-        
-        private readonly List<Type> _ignoreBindInterfaces = new List<Type>(){typeof(IService), typeof(IInit)};
+
+        private readonly List<Type> _ignoreBindInterfaces = new List<Type>() { typeof(IService), typeof(IInit) };
 
         public static IServiceLocator Instance { get; private set; }
 
         public ServiceLocator()
         {
             Instance = this;
-        }
-
-        public void Init()
-        {
-            // ServiceLocator itself doesn't need initialization
         }
 
         public void RegisterLazy<TInterface, TImplementation>()
@@ -36,6 +31,7 @@ namespace Core.ServiceLocator
                 {
                     init.Init();
                 }
+
                 return service;
             };
         }
@@ -51,6 +47,7 @@ namespace Core.ServiceLocator
                 {
                     init.Init();
                 }
+
                 return service;
             };
         }
@@ -63,34 +60,34 @@ namespace Core.ServiceLocator
             }
 
             // Auto-register for all implemented interfaces (excluding IService itself)
-            var serviceType = service.GetType();
-            var interfaces = serviceType.GetInterfaces();
+            // var serviceType = service.GetType();
+            // var interfaces = serviceType.GetInterfaces();
+            //
+            // foreach (var interfaceType in interfaces)
+            // {
+            //     if (interfaceType == typeof(IService))
+            //     {
+            //         continue;
+            //     }
+            //
+            //     if (typeof(IService).IsAssignableFrom(interfaceType) && !_ignoreBindInterfaces.Contains(interfaceType))
+            //     {
+            //         if (!_services.TryAdd(interfaceType, service))
+            //         {
+            //             Debug.LogWarning($"Service {interfaceType.Name} is already registered.");
+            //         }
+            //     }
+            // }
 
-            foreach (var interfaceType in interfaces)
+            var concreteType = typeof(T);
+            if (!_services.TryAdd(concreteType, service))
             {
-                if (interfaceType == typeof(IService))
-                {
-                    continue;
-                }
-
-                if (typeof(IService).IsAssignableFrom(interfaceType) && !_ignoreBindInterfaces.Contains(interfaceType))
-                {
-                    if (!_services.TryAdd(interfaceType, service))
-                    {
-                        Debug.LogWarning($"Service {interfaceType.Name} is already registered.");
-                    }
-                }
+                Debug.LogWarning($"Service {concreteType.Name} is already registered.");
             }
 
-            // Also register as concrete type if needed
-            var concreteType = typeof(T);
-            if (concreteType.IsClass && !concreteType.IsAbstract)
+            if (service is IInit init)
             {
-                _services.TryAdd(concreteType, service);
-                if (service is IInit init)
-                {
-                    init.Init();
-                }
+                init.Init();
             }
         }
 
