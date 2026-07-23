@@ -29,6 +29,8 @@ namespace Gameplay.Spawners
             enemy.AddComponent(enemyAi);
             _tanksRegister.RegisterEnemy(enemy);
             enemy.name = "Enemy";
+            enemy.tag = "Enemy";
+            enemy.layer = LayerMask.NameToLayer("Enemy");
 
             return enemy;
         }

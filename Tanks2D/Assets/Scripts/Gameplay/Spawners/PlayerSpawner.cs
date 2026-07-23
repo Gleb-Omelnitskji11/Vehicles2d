@@ -13,6 +13,8 @@ namespace Gameplay.Spawners
             GameObject player = Spawn(tankPrefab);
             player.AddComponent<PlayerInput>();
             player.name = "Player";
+            player.tag = "Player";
+            player.layer = LayerMask.NameToLayer("Player");
             _tanksRegister.RegisterPlayer(player);
 
             return player;

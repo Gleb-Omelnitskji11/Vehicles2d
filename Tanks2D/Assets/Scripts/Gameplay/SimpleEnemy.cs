@@ -6,23 +6,27 @@ namespace Gameplay
     [RequireComponent(typeof(TankMovement))]
     public class SimpleEnemy : MonoBehaviour
     {
-        [Header("Direction")]
-        [SerializeField] private float _minDirectionChangeTime = 2f;
+        [Header("Direction")] [SerializeField] private float _minDirectionChangeTime = 2f;
         [SerializeField] private float _maxDirectionChangeTime = 5f;
 
-        [Header("Obstacle")]
-        [SerializeField] private float _forwardCheckDistance = 2f;
+        [Header("Obstacle")] [SerializeField] private float _forwardCheckDistance = 2f;
         [SerializeField] private float _sideCheckDistance = 1.2f;
         [SerializeField] private float _length = 0.37f;
         [SerializeField] private LayerMask _obstacleMask;
+        [SerializeField] private LayerMask _findMask;
 
-        [Header("Turning")]
-        [SerializeField] private float _turnDecisionAngle = 60f;
+        [Header("Turning")] [SerializeField] private float _turnDecisionAngle = 60f;
         [SerializeField] private float _reverseUntilAngle = 60f;
+
+        [Header("Chasing")] [SerializeField] private float _viewDistance = 8f;
+
+        private Transform _player;
+        private bool _chasingPlayer;
 
         private TankMovement _movement;
 
         private Vector2 _targetDirection;
+
         private float _timer;
 
         private bool _avoiding;
@@ -31,7 +35,7 @@ namespace Gameplay
         private void Awake()
         {
             _obstacleMask = LayerMask.GetMask("Wall", "Enemy");
-            //_findMask = LayerMask.GetMask("Player");
+            _findMask = LayerMask.GetMask("Player");
             _movement = GetComponent<TankMovement>();
         }
 
@@ -42,12 +46,20 @@ namespace Gameplay
 
         private void Update()
         {
-            _timer -= Time.deltaTime;
+            FindPlayer();
 
-            if (!_avoiding && _timer <= 0f)
-                PickRandomDirection();
+            if (_chasingPlayer)
+            {
+                _targetDirection = ((Vector2)transform.position - (Vector2)_player.position).normalized;
+            }
+            else
+            {
+                _timer -= Time.deltaTime;
 
-            HandleObstacle();
+                if (!_avoiding && _timer <= 0f)
+                    PickRandomDirection();
+                HandleObstacle();
+            }
 
             Move();
         }
@@ -82,6 +94,23 @@ namespace Gameplay
             }
 
             _targetDirection = -transform.up;
+        }
+
+        private void FindPlayer()
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _viewDistance, _findMask);
+
+            if (hit.collider == null)
+            {
+                _chasingPlayer = false;
+                _player = null;
+            }
+            else
+            {
+                _player = hit.transform;
+                _chasingPlayer = true;
+                _avoiding = false;
+            }
         }
 
         private void Move()
