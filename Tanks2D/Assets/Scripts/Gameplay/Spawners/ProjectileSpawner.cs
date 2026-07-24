@@ -10,10 +10,12 @@ namespace Gameplay.Spawners
     {
         private ProjectileConfigScript _projectileConfig;
         private GameObject _projectileParent;
+        private ProjectileRegister _projectileRegister;
 
         public void Init()
         {
             var configProvider = Services.Get<IConfigProvider>();
+            _projectileRegister = Services.Get<ProjectileRegister>();
             _projectileConfig = configProvider.ProjectileConfig;
             _projectileParent = new GameObject
             {
@@ -27,6 +29,7 @@ namespace Gameplay.Spawners
             var projectile = Object.Instantiate(prefab, position, rotation, _projectileParent.transform);
             projectile.tag = "Projectile";
             projectile.gameObject.layer = LayerMask.NameToLayer("Projectile");
+            _projectileRegister.RegisterProjectile(projectile);
             return projectile;
         }
     }

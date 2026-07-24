@@ -27,7 +27,7 @@ namespace Gameplay.Spawners
 
             Type enemyAi = GetAiComponent(enemyType);
             enemy.gameObject.AddComponent(enemyAi);
-            TanksRegister.RegisterEnemy(enemy);
+            TanksRegister.RegisterTank(enemy);
             
             enemy.name = "Enemy";
             enemy.tag = "Enemy";

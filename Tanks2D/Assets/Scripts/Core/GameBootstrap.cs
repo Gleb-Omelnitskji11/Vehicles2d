@@ -2,13 +2,13 @@ using Core.ServiceLocator;
 using Gameplay;
 using Gameplay.Spawners;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Core
 {
     public class GameBootstrap : MonoBehaviour
     {
         [SerializeField] private MapLoader _mapLoader;
+        [SerializeField] private GamePopupsProvider _gamePopupsProvider;
 
         private void Awake()
         {
@@ -20,9 +20,12 @@ namespace Core
 
             serviceLocator.Register<MapLoader>(_mapLoader);
             serviceLocator.Register<TanksRegister>(new TanksRegister());
+            serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
             serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());
+            serviceLocator.Register<GamePopupsProvider>(_gamePopupsProvider);
+            serviceLocator.Register<ILevelLoader>(new LevelLoader());
             serviceLocator.Register<GameProgressor>(new GameProgressor());
 
             StartGame();

@@ -8,7 +8,7 @@ namespace Gameplay
 {
     public class TankWeapon : MonoBehaviour
     {
-        private float _fireCooldown = 0.4f;
+        private float _fireCooldown = 0.2f;
 
         private float _cooldown;
         private IProjectileSpawner _projectileSpawner;

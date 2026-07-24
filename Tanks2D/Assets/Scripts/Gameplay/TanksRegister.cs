@@ -5,24 +5,19 @@ namespace Gameplay
 {
     public class TanksRegister : IService
     {
-        public Tank Player {get; private set;}
-        private readonly List<Tank> _activeEnemies = new List<Tank>();
+        private readonly List<Tank> _activeTanks = new List<Tank>();
         
-        public IReadOnlyList<Tank> ActiveEnemies => _activeEnemies;
+        public IReadOnlyList<Tank> ActiveTanks => _activeTanks;
 
-        public void RegisterPlayer(Tank player)
-        {
-            Player = player;
-        }
 
-        public void RegisterEnemy(Tank enemy)
+        public void RegisterTank(Tank tank)
         {
-            _activeEnemies.Add(enemy);
+            _activeTanks.Add(tank);
         }
         
-        public void UnRegisterEnemy(Tank enemy)
+        public void UnRegisterTank(Tank tank)
         {
-            _activeEnemies.Remove(enemy);
+            _activeTanks.Remove(tank);
         }
     }
 }

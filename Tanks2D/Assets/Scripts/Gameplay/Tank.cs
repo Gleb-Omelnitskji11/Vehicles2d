@@ -67,7 +67,7 @@ namespace Gameplay
         private void OnDie()
         {
             Died?.Invoke(this);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
 
         private void OnTakeDamage()

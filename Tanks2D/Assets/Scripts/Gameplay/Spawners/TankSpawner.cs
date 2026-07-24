@@ -12,7 +12,7 @@ namespace Gameplay
         protected TankConfigScript TankConfigScript;
         
         private const int MaxSpawnAttempts = 10;
-        private const float Radius = 2.0f; 
+        private const float Radius = 5.0f; 
         private const float SqrRadius = Radius * Radius;
 
         public virtual void Init()
@@ -25,7 +25,7 @@ namespace Gameplay
 
         protected Tank Spawn(GameObject prefab)
         {
-            Vector2 position = _mapLoader.Map.GetRandomPoint();
+            Vector2 position = GetClearSpawnPosition();
             Vector2 dir = -position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
             var newObj = Object.Instantiate(prefab, position, Quaternion.Euler(0, 0, angle));
@@ -57,12 +57,7 @@ namespace Gameplay
 
         private bool IsFree(Vector2 potentialPoint)
         {
-            Vector3 playerPos = TanksRegister.Player.transform.position;
-            
-            if(IsNear(playerPos, potentialPoint))
-                return false;
-
-            foreach (var tank in TanksRegister.ActiveEnemies)
+            foreach (var tank in TanksRegister.ActiveTanks)
             {
                 if (IsNear(tank.transform.position, potentialPoint))
                 {
