@@ -1,6 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using Core.ServiceLocator;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,7 +19,7 @@ namespace Core
             LoadNextScene();
         }
 
-        private async Task Binding()
+        private async UniTask Binding()
         {
             IServiceLocator serviceLocator = new ServiceLocator.ServiceLocator();
             serviceLocator.Register<IServiceLocator>(serviceLocator);
@@ -32,8 +32,6 @@ namespace Core
 
         private void LoadNextScene()
         {
-            // int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            // string sceneName = SceneManager.GetSceneByBuildIndex(currentSceneIndex + 1).name;
             string sceneName = "GameScene";
             var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             if (operation == null)

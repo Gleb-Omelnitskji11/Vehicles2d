@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Config;
-using Core.ServiceLocator;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Core
@@ -14,19 +13,12 @@ namespace Core
         private const string TankConfigPath =  "TankConfig";
         private const string ProjectileConfigPath = "ProjectileConfig";
         
-        public async Task LoadConfigAsync()
+        public async UniTask LoadConfigAsync()
         {
             ResourceRequest tankRequest = Resources.LoadAsync<TankConfigScript>(TankConfigPath);
             ResourceRequest projectileRequest = Resources.LoadAsync<ProjectileConfigScript>(ProjectileConfigPath);
-
-
-            var tankTcs = new TaskCompletionSource<bool>();
-            tankRequest.completed += _ => tankTcs.SetResult(true);
-
-            var projectileTcs = new TaskCompletionSource<bool>();
-            projectileRequest.completed += _ => projectileTcs.SetResult(true);
             
-            await Task.WhenAll(tankTcs.Task, projectileTcs.Task);
+            await UniTask.WhenAll(tankRequest.ToUniTask(), projectileRequest.ToUniTask());
 
             _tankConfig = tankRequest.asset as TankConfigScript;
             _projectileConfig = projectileRequest.asset as ProjectileConfigScript;
