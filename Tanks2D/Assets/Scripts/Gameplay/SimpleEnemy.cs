@@ -6,31 +6,33 @@ namespace Gameplay
     [RequireComponent(typeof(TankMovement))]
     public class SimpleEnemy : MonoBehaviour
     {
-        [Header("Direction")] [SerializeField] private float _minDirectionChangeTime = 2f;
+        [Header("Direction")]
+        [SerializeField] private float _minDirectionChangeTime = 2f;
         [SerializeField] private float _maxDirectionChangeTime = 5f;
 
-        [Header("Obstacle")] [SerializeField] private float _forwardCheckDistance = 2f;
+        [Header("Obstacle")]
+        [SerializeField] private float _forwardCheckDistance = 2f;
         [SerializeField] private float _sideCheckDistance = 1.2f;
         [SerializeField] private float _length = 0.37f;
         [SerializeField] private LayerMask _obstacleMask;
         [SerializeField] private LayerMask _findMask;
 
-        [Header("Turning")] [SerializeField] private float _turnDecisionAngle = 60f;
+        [Header("Turning")]
+        [SerializeField] private float _turnDecisionAngle = 60f;
         [SerializeField] private float _reverseUntilAngle = 60f;
 
-        [Header("Chasing")] [SerializeField] private float _viewDistance = 8f;
+        [Header("Chasing")]
+        [SerializeField] private float _viewDistance = 8f;
 
         private Transform _player;
-        private bool _chasingPlayer;
-
         private TankMovement _movement;
 
         private Vector2 _targetDirection;
 
         private float _timer;
-
         private bool _avoiding;
         private bool _backward;
+        private bool _chasingPlayer;
 
         private void Awake()
         {
@@ -41,7 +43,14 @@ namespace Gameplay
 
         private void Start()
         {
+            SetEvents();
             PickRandomDirection();
+        }
+
+        private void SetEvents()
+        {
+            Tank tank = GetComponent<Tank>();
+            tank.OnCollision += OnCollision;
         }
 
         private void Update()
@@ -102,8 +111,7 @@ namespace Gameplay
 
             if (hit.collider == null)
             {
-                _chasingPlayer = false;
-                _player = null;
+                LoseTarget();
             }
             else
             {
@@ -111,6 +119,12 @@ namespace Gameplay
                 _chasingPlayer = true;
                 _avoiding = false;
             }
+        }
+
+        private void LoseTarget()
+        {
+            _chasingPlayer = false;
+            _player = null;
         }
 
         private void Move()
@@ -131,6 +145,21 @@ namespace Gameplay
             }
 
             _movement.Move(move, turn);
+        }
+
+        private void OnCollision(Collision2D collision)
+        {
+            GameObject obj = collision.gameObject;
+            if (obj.CompareTag("Player"))
+            {
+                if (collision.gameObject.TryGetComponent<Tank>(out var player))
+                {
+                    player.BasicUnitHealth.TakeLethalDamage();
+                    LoseTarget();
+                }
+            }
+
+            PickRandomDirection();
         }
 
         private void PickRandomDirection()

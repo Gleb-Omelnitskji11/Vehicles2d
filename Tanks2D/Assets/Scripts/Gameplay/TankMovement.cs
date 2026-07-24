@@ -20,6 +20,7 @@ namespace Gameplay
 
         public void Move(float move, float turn)
         {
+            if (move == 0f) turn = 0f;
             _moveInput = move;
             _turnInput = turn;
         }

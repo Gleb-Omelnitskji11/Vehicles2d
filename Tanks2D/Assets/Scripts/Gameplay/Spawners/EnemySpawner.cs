@@ -13,31 +13,34 @@ namespace Gameplay.Spawners
             { EnemyType.Simple, typeof(SimpleEnemy) }
         };
 
-        private readonly Dictionary<EnemyType, TankID> _enemiesData = new Dictionary<EnemyType, TankID>()
+        private readonly Dictionary<EnemyType, TankModel> _enemiesData = new Dictionary<EnemyType, TankModel>()
         {
-            { EnemyType.Simple, TankID.Default}
+            { EnemyType.Simple, TankModel.Default}
         };
         
-        public GameObject SpawnEnemy(EnemyType enemyType)
+        public Tank SpawnEnemy(EnemyType enemyType)
         {
-            var config = _configProvider.TankConfig;
+            var config = TankConfigScript;
             var tankID = GetTankID(EnemyType.Simple);
             GameObject tankPrefab = config.GetTankPrefab(tankID);
-            GameObject enemy = Spawn(tankPrefab);
+            Tank enemy = Spawn(tankPrefab);
 
             Type enemyAi = GetAiComponent(enemyType);
-            enemy.AddComponent(enemyAi);
-            _tanksRegister.RegisterEnemy(enemy);
+            enemy.gameObject.AddComponent(enemyAi);
+            TanksRegister.RegisterEnemy(enemy);
+            
             enemy.name = "Enemy";
             enemy.tag = "Enemy";
-            enemy.layer = LayerMask.NameToLayer("Enemy");
+            enemy.gameObject.layer = LayerMask.NameToLayer("Enemy");
+
+            enemy.Init(new BasicUnitHealth(1), Team.Enemy);
 
             return enemy;
         }
         
-        private TankID GetTankID(EnemyType enemyType)
+        private TankModel GetTankID(EnemyType enemyType)
         {
-            if (_enemiesData.TryGetValue(enemyType, out TankID tankID))
+            if (_enemiesData.TryGetValue(enemyType, out TankModel tankID))
             {
                 return tankID;
             }

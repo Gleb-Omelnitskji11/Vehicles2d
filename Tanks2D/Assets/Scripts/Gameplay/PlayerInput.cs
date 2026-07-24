@@ -6,19 +6,24 @@ namespace Gameplay
     public class PlayerInput : MonoBehaviour
     {
         private TankMovement _movement;
+        private TankWeapon _weapon;
 
         private void Awake()
         {
             _movement = GetComponent<TankMovement>();
+            _weapon = GetComponent<TankWeapon>();
         }
 
         private void Update()
         {
             float move = Input.GetAxisRaw("Vertical");
-
             float turn = Input.GetAxisRaw("Horizontal");
-
             _movement.Move(move, turn);
+            
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                _weapon.Fire();
+            }
         }
     }
 }

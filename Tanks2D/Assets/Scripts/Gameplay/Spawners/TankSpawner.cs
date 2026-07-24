@@ -1,3 +1,4 @@
+using Config;
 using Core;
 using Core.ServiceLocator;
 using UnityEngine;
@@ -7,8 +8,8 @@ namespace Gameplay
     public abstract class TankSpawner
     {
         private MapLoader _mapLoader;
-        protected TanksRegister _tanksRegister;
-        protected ConfigProvider _configProvider;
+        protected TanksRegister TanksRegister;
+        protected TankConfigScript TankConfigScript;
         
         private const int MaxSpawnAttempts = 10;
         private const float Radius = 2.0f; 
@@ -17,17 +18,18 @@ namespace Gameplay
         public virtual void Init()
         {
             _mapLoader = Services.Get<MapLoader>();
-            _tanksRegister = Services.Get<TanksRegister>();
-            _configProvider = Services.Get<ConfigProvider>();
+            TanksRegister = Services.Get<TanksRegister>();
+            var configProvider = Services.Get<IConfigProvider>();
+            TankConfigScript = configProvider.TankConfig;
         }
 
-        protected GameObject Spawn(GameObject prefab)
+        protected Tank Spawn(GameObject prefab)
         {
             Vector2 position = _mapLoader.Map.GetRandomPoint();
-            GameObject tank = Object.Instantiate(prefab, position, Quaternion.identity, _mapLoader.Map.transform);
             Vector2 dir = -position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-            tank.transform.rotation = Quaternion.Euler(0, 0, angle);
+            var newObj = Object.Instantiate(prefab, position, Quaternion.Euler(0, 0, angle));
+            Tank tank = newObj.GetComponent<Tank>();
 
             return tank;
         }
@@ -55,12 +57,12 @@ namespace Gameplay
 
         private bool IsFree(Vector2 potentialPoint)
         {
-            Vector3 playerPos = _tanksRegister.Player.transform.position;
+            Vector3 playerPos = TanksRegister.Player.transform.position;
             
             if(IsNear(playerPos, potentialPoint))
                 return false;
 
-            foreach (var tank in _tanksRegister.ActiveEnemies)
+            foreach (var tank in TanksRegister.ActiveEnemies)
             {
                 if (IsNear(tank.transform.position, potentialPoint))
                 {

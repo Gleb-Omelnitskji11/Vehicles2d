@@ -25,7 +25,7 @@ namespace Core
             serviceLocator.Register<IServiceLocator>(serviceLocator);
             
             ConfigProvider configProvider = new ConfigProvider();
-            serviceLocator.Register<ConfigProvider>(configProvider);
+            serviceLocator.Register<IConfigProvider>(configProvider);
 
             await configProvider.LoadConfigAsync();
         }

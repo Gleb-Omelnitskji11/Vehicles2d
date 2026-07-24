@@ -22,14 +22,16 @@ namespace Core
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
-            serviceLocator.Register<GameProgress>(new GameProgress());
+            serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());
+            serviceLocator.Register<GameProgressor>(new GameProgressor());
 
             StartGame();
         }
 
         private void StartGame()
         {
-            Services.Get<GameProgress>().StartGame();
+            var gameProgress = Services.Get<GameProgressor>();
+            gameProgress.StartGame();
         }
     }
 }

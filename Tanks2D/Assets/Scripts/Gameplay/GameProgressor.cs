@@ -4,7 +4,7 @@ using Gameplay.Spawners;
 
 namespace Gameplay
 {
-    public class GameProgress : IService, IInit
+    public class GameProgressor : IService, IInit
     {
         private MapLoader _mapLoader;
         private IPlayerSpawner _playerSpawner;
@@ -20,6 +20,7 @@ namespace Gameplay
         public void StartGame()
         {
             _playerSpawner.SpawnPlayer();
+            _enemySpawner.SpawnEnemy(EnemyType.Simple);
             _enemySpawner.SpawnEnemy(EnemyType.Simple);
         }
     }

@@ -5,35 +5,52 @@ using UnityEngine;
 
 namespace Core
 {
-    public class ConfigProvider : IService, IConfigProvider
+    public class ConfigProvider : IConfigProvider
     {
         private readonly string _configPath;
-        private TankConfigScript _loadedConfig;
+        private TankConfigScript _tankConfig;
+        private ProjectileConfigScript _projectileConfig;
 
-        public ConfigProvider(string configPath = "TankConfig")
-        {
-            _configPath = configPath;
-        }
+        private const string TankConfigPath =  "TankConfig";
+        private const string ProjectileConfigPath = "ProjectileConfig";
         
-        public async Task<TankConfigScript> LoadConfigAsync()
+        public async Task LoadConfigAsync()
         {
-            ResourceRequest request = Resources.LoadAsync<TankConfigScript>(_configPath);
+            ResourceRequest tankRequest = Resources.LoadAsync<TankConfigScript>(TankConfigPath);
+            ResourceRequest projectileRequest = Resources.LoadAsync<ProjectileConfigScript>(ProjectileConfigPath);
 
-            var tcs = new TaskCompletionSource<bool>();
-            request.completed += _ => tcs.SetResult(true);
-            await tcs.Task;
 
-            _loadedConfig = request.asset as TankConfigScript;
+            var tankTcs = new TaskCompletionSource<bool>();
+            tankRequest.completed += _ => tankTcs.SetResult(true);
 
-            if (_loadedConfig != null)
+            var projectileTcs = new TaskCompletionSource<bool>();
+            projectileRequest.completed += _ => projectileTcs.SetResult(true);
+            
+            await Task.WhenAll(tankTcs.Task, projectileTcs.Task);
+
+            _tankConfig = tankRequest.asset as TankConfigScript;
+            _projectileConfig = projectileRequest.asset as ProjectileConfigScript;
+
+            if (_tankConfig == null)
             {
-                return _loadedConfig;
+                Debug.LogError($"[ConfigProvider] Failed to load TankConfig from path: Resources/{TankConfigPath}");
             }
-        
-            Debug.LogError($"[ConfigInstaller] Failed to load TankConfig from path: Resources/{_configPath}");
-            return null;
+            else
+            {
+                Debug.Log($"[ConfigProvider] TankConfig successfully loaded!");
+            }
+
+            if (_projectileConfig == null)
+            {
+                Debug.LogError($"[ConfigProvider] Failed to load ProjectileConfig from path: Resources/{ProjectileConfigPath}");
+            }
+            else
+            {
+                Debug.Log($"[ConfigProvider] ProjectileConfig successfully loaded!");
+            }
         }
 
-        public TankConfigScript TankConfig => _loadedConfig;
+        public TankConfigScript TankConfig => _tankConfig;
+        public ProjectileConfigScript ProjectileConfig => _projectileConfig;
     }
 }

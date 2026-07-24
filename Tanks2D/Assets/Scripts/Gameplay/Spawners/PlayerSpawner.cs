@@ -1,4 +1,3 @@
-using Core.ServiceLocator;
 using Enums;
 using UnityEngine;
 
@@ -6,16 +5,22 @@ namespace Gameplay.Spawners
 {
     public class PlayerSpawner : TankSpawner, IPlayerSpawner
     {
-        public GameObject SpawnPlayer()
+        public Tank SpawnPlayer()
         {
-            var config = _configProvider.TankConfig;
-            GameObject tankPrefab = config.GetTankPrefab(TankID.Default);
-            GameObject player = Spawn(tankPrefab);
-            player.AddComponent<PlayerInput>();
+            var config = TankConfigScript;
+            GameObject tankPrefab = config.GetTankPrefab(TankModel.Default);
+            Tank player = Spawn(tankPrefab);
+            TankWeapon gun = player.gameObject.AddComponent<TankWeapon>();
+            player.gameObject.AddComponent<PlayerInput>();
+            
+            gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
+            
             player.name = "Player";
             player.tag = "Player";
-            player.layer = LayerMask.NameToLayer("Player");
-            _tanksRegister.RegisterPlayer(player);
+            player.gameObject.layer = LayerMask.NameToLayer("Player");
+            TanksRegister.RegisterPlayer(player);
+            
+            player.Init(new BasicUnitHealth(1), Team.Ally);
 
             return player;
         }

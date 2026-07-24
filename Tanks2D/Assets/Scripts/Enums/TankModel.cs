@@ -1,6 +1,6 @@
 namespace Enums
 {
-    public enum TankID
+    public enum TankModel
     {
         Default,
     }

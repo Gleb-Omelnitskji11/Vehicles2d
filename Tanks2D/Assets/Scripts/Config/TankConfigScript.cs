@@ -1,7 +1,9 @@
 using System;
 using Enums;
+using Gameplay;
 using Gameplay.Spawners;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Config
 {
@@ -10,17 +12,17 @@ namespace Config
     {
         [SerializeField] private TankPrefab[] _tankPrefabs = new TankPrefab[1];
 
-        public GameObject GetTankPrefab(TankID tankID)
+        public GameObject GetTankPrefab(TankModel tankModel)
         {
             foreach (var tankPrefab in _tankPrefabs)
             {
-                if (tankPrefab.TankID == tankID)
+                if (tankPrefab.TankModel == tankModel)
                 {
                     return tankPrefab.Prefab;
                 }
             }
             
-            Debug.LogError($"Tank Prefab {tankID} not found");
+            Debug.LogError($"Tank Prefab {tankModel} not found");
             throw new Exception("Tank Prefab Not Found");
         }
         
@@ -28,7 +30,7 @@ namespace Config
         [Serializable]
         public class TankPrefab
         {
-            public TankID TankID;
+            public TankModel TankModel;
             public GameObject Prefab;
         }
     }

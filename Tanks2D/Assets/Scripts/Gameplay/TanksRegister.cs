@@ -1,27 +1,26 @@
 using System.Collections.Generic;
 using Core.ServiceLocator;
-using UnityEngine;
 
 namespace Gameplay
 {
     public class TanksRegister : IService
     {
-        public GameObject Player {get; private set;}
-        private readonly List<GameObject> _activeEnemies = new List<GameObject>();
+        public Tank Player {get; private set;}
+        private readonly List<Tank> _activeEnemies = new List<Tank>();
         
-        public IReadOnlyList<GameObject> ActiveEnemies => _activeEnemies;
+        public IReadOnlyList<Tank> ActiveEnemies => _activeEnemies;
 
-        public void RegisterPlayer(GameObject player)
+        public void RegisterPlayer(Tank player)
         {
             Player = player;
         }
 
-        public void RegisterEnemy(GameObject enemy)
+        public void RegisterEnemy(Tank enemy)
         {
             _activeEnemies.Add(enemy);
         }
         
-        public void UnRegisterEnemy(GameObject enemy)
+        public void UnRegisterEnemy(Tank enemy)
         {
             _activeEnemies.Remove(enemy);
         }
