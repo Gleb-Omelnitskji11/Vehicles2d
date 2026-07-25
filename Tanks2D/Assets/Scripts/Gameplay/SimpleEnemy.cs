@@ -49,7 +49,7 @@ namespace Gameplay
 
         private void SetEvents()
         {
-            Tank tank = GetComponent<Tank>();
+            Vehicle tank = GetComponent<Vehicle>();
             tank.OnCollision += OnCollision;
         }
 
@@ -152,7 +152,7 @@ namespace Gameplay
             GameObject obj = collision.gameObject;
             if (obj.CompareTag("Player"))
             {
-                if (collision.gameObject.TryGetComponent<Tank>(out var player))
+                if (collision.gameObject.TryGetComponent<Vehicle>(out var player))
                 {
                     player.BasicUnitHealth.TakeLethalDamage();
                     LoseTarget();

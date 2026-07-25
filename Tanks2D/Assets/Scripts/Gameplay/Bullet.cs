@@ -20,7 +20,7 @@ namespace Gameplay
             }
         }
 
-        public override void Apply(Tank tank)
+        public override void Apply(Vehicle tank)
         {
             tank.BasicUnitHealth.TakeDamage(_damage);
             base.Apply(tank);

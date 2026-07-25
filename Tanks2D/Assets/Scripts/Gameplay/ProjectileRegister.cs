@@ -13,10 +13,10 @@ namespace Gameplay
         public void RegisterProjectile(BasicProjectile projectile)
         {
             _activeProjectile.Add(projectile);
-            projectile.Die += UnRegisterEnemy;
+            projectile.Deactivated += UnRegisterProjectile;
         }
         
-        public void UnRegisterEnemy(BasicProjectile projectile)
+        public void UnRegisterProjectile(BasicProjectile projectile)
         {
             _activeProjectile.Remove(projectile);
         }

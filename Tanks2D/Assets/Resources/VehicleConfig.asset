@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 203560a3e4c744388489ad5acffb6f9b, type: 3}
-  m_Name: TankConfig
+  m_Name: VehicleConfig
   m_EditorClassIdentifier: 
-  _tankPrefabs:
-  - TankID: 0
+  _vehicleData:
+  - VehicleType: 0
     Prefab: {fileID: 9093220611384214078, guid: 68cd0377a4eff8e4fa1283b2d3af93c9, type: 3}

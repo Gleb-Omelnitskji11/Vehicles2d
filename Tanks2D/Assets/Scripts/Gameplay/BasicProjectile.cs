@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
+using Core.ObjectPool;
 using Enums;
 using UnityEngine;
 
 namespace Gameplay
 {
-    public class BasicProjectile : MonoBehaviour
+    public class BasicProjectile : MonoBehaviour, IPooledObject
     {
         [SerializeField] protected float _lifeTime = 5f;
         protected Vector2 StartDirection;
@@ -19,7 +20,7 @@ namespace Gameplay
             _lifeTimeCoroutine = StartCoroutine(LifetimeRoutine());
         }
 
-        public virtual void Apply(Tank tank)
+        public virtual void Apply(Vehicle tank)
         {
             Despawn();
         }
@@ -38,7 +39,7 @@ namespace Gameplay
                 _lifeTimeCoroutine = null;
             }
 
-            Die?.Invoke(this);
+            Deactivated?.Invoke(this);
             Destroy(gameObject);
         }
 
@@ -53,9 +54,27 @@ namespace Gameplay
 
         private void OnDestroy()
         {
-            Die = null;
+            Deactivated = null;
         }
 
-        public Action<BasicProjectile> Die;
+        public Action<BasicProjectile> Deactivated;
+        public bool IsActive { get; }
+        public string PoolKey { get; }
+        public IObjectPooler Pooler { get; }
+        
+        public void SetPoolData(IObjectPooler pooler, string poolKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Deactivate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Activate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

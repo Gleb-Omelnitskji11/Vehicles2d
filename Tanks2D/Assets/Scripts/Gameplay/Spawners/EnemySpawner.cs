@@ -13,21 +13,18 @@ namespace Gameplay.Spawners
             { EnemyType.Simple, typeof(SimpleEnemy) }
         };
 
-        private readonly Dictionary<EnemyType, TankModel> _enemiesData = new Dictionary<EnemyType, TankModel>()
+        private readonly Dictionary<EnemyType, VehicleType> _enemiesData = new Dictionary<EnemyType, VehicleType>()
         {
-            { EnemyType.Simple, TankModel.Default}
+            { EnemyType.Simple, VehicleType.Tank}
         };
         
-        public Tank SpawnEnemy(EnemyType enemyType)
+        public Vehicle SpawnEnemy(EnemyType enemyType)
         {
-            var config = TankConfigScript;
-            var tankID = GetTankID(EnemyType.Simple);
-            GameObject tankPrefab = config.GetTankPrefab(tankID);
-            Tank enemy = Spawn(tankPrefab);
+            var vehicleID = GetVehicleID(EnemyType.Simple);
+            Vehicle enemy = SpawnVehicle(vehicleID);
 
             Type enemyAi = GetAiComponent(enemyType);
             enemy.gameObject.AddComponent(enemyAi);
-            TanksRegister.RegisterTank(enemy);
             
             enemy.name = "Enemy";
             enemy.tag = "Enemy";
@@ -38,15 +35,15 @@ namespace Gameplay.Spawners
             return enemy;
         }
         
-        private TankModel GetTankID(EnemyType enemyType)
+        private VehicleType GetVehicleID(EnemyType enemyType)
         {
-            if (_enemiesData.TryGetValue(enemyType, out TankModel tankID))
+            if (_enemiesData.TryGetValue(enemyType, out VehicleType tankID))
             {
                 return tankID;
             }
         
             Debug.LogError($"[EnemySpawner] AI type for {enemyType} not found in dictionary! Adding default ai type.");
-            throw new Exception("TankId Not Found");
+            throw new Exception("VehicleId Not Found");
         }
 
         private Type GetAiComponent(EnemyType enemyType)

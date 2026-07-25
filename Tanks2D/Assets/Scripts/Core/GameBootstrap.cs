@@ -1,3 +1,4 @@
+using Core.ObjectPool;
 using Core.ServiceLocator;
 using Gameplay;
 using Gameplay.Spawners;
@@ -21,6 +22,7 @@ namespace Core
             serviceLocator.Register<MapLoader>(_mapLoader);
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
+            serviceLocator.Register<IObjectPooler>(new ObjectPooler());
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
             serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());

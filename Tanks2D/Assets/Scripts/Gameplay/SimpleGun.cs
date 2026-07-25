@@ -1,4 +1,3 @@
-using Core;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Spawners;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class TankWeapon : MonoBehaviour
+    public class SimpleGun : MonoBehaviour
     {
         private float _fireCooldown = 0.2f;
 
@@ -29,13 +28,17 @@ namespace Gameplay
                 _cooldown -= Time.deltaTime;
         }
 
-        public void Fire()
+        public virtual void Fire()
         {
             if (_cooldown > 0)
                 return;
 
             _cooldown = _fireCooldown;
-            BasicProjectile projectile = _projectileSpawner.Spawn(_projectileID, transform.position, transform.rotation);
+            BasicProjectile projectile = _projectileSpawner.SpawnProjectile(_projectileID);
+            
+            projectile.transform.position = transform.position;
+            projectile.transform.rotation = transform.rotation;
+            projectile.gameObject.SetActive(true);
             projectile.Init(_team);
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class Tank : MonoBehaviour
+    public class Vehicle : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _teamHighlight;
         [SerializeField] private Rigidbody2D _rigidbody;
@@ -78,7 +78,7 @@ namespace Gameplay
 
         public event Action<Collision2D> OnCollision;
         
-        public event Action<Tank> Died;
-        public event Action<Tank> TakenDamage;
+        public event Action<Vehicle> Died;
+        public event Action<Vehicle> TakenDamage;
     }
 }

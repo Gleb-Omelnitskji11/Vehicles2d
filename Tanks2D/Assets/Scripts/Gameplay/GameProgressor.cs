@@ -65,11 +65,11 @@ namespace Gameplay
             _enemiesLess--;
         }
 
-        private void OnEnemyDie(Tank tank)
+        private void OnEnemyDie(Vehicle tank)
         {
             _enemiesCount--;
             Object.Destroy(tank.gameObject);
-            _tankRegistry.UnRegisterTank(tank);
+            _tankRegistry.UnRegisterVehicle(tank);
             SpawnEnemies();
 
             if (_enemiesCount == 0 && _enemiesLess == 0)
@@ -85,7 +85,7 @@ namespace Gameplay
             {
                 var tank = _tankRegistry.ActiveTanks[0];
                 tank.gameObject.SetActive(false);
-                _tankRegistry.UnRegisterTank(tank);
+                _tankRegistry.UnRegisterVehicle(tank);
                 Object.Destroy(tank.gameObject);
             }
 
@@ -93,13 +93,13 @@ namespace Gameplay
             {
                 var projectile = _projectileRegister.ActiveProjectile[0];
                 projectile.gameObject.SetActive(false);
-                _projectileRegister.UnRegisterEnemy(projectile);
+                _projectileRegister.UnRegisterProjectile(projectile);
                 Object.Destroy(projectile.gameObject);
             }
             GameStatus = GameStatus.NotStarted;
         }
 
-        private void OnPlayerDie(Tank tank)
+        private void OnPlayerDie(Vehicle tank)
         {
             GameStatus = GameStatus.Lose;
             _gamePopupsProvider.ResultPopup.Open();

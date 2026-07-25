@@ -7,7 +7,7 @@ namespace Core
     public class ConfigProvider : IConfigProvider
     {
         private readonly string _configPath;
-        private TankConfigScript _tankConfig;
+        private VehicleConfigScript _vehicleConfig;
         private ProjectileConfigScript _projectileConfig;
 
         private const string TankConfigPath =  "TankConfig";
@@ -15,15 +15,15 @@ namespace Core
         
         public async UniTask LoadConfigAsync()
         {
-            ResourceRequest tankRequest = Resources.LoadAsync<TankConfigScript>(TankConfigPath);
+            ResourceRequest tankRequest = Resources.LoadAsync<VehicleConfigScript>(TankConfigPath);
             ResourceRequest projectileRequest = Resources.LoadAsync<ProjectileConfigScript>(ProjectileConfigPath);
             
             await UniTask.WhenAll(tankRequest.ToUniTask(), projectileRequest.ToUniTask());
 
-            _tankConfig = tankRequest.asset as TankConfigScript;
+            _vehicleConfig = tankRequest.asset as VehicleConfigScript;
             _projectileConfig = projectileRequest.asset as ProjectileConfigScript;
 
-            if (_tankConfig == null)
+            if (_vehicleConfig == null)
             {
                 Debug.LogError($"[ConfigProvider] Failed to load TankConfig from path: Resources/{TankConfigPath}");
             }
@@ -42,7 +42,7 @@ namespace Core
             }
         }
 
-        public TankConfigScript TankConfig => _tankConfig;
+        public VehicleConfigScript VehicleConfig => _vehicleConfig;
         public ProjectileConfigScript ProjectileConfig => _projectileConfig;
     }
 }

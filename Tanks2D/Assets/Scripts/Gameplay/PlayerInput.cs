@@ -6,12 +6,12 @@ namespace Gameplay
     public class PlayerInput : MonoBehaviour
     {
         private TankMovement _movement;
-        private TankWeapon _weapon;
+        private SimpleGun _weapon;
 
         private void Awake()
         {
             _movement = GetComponent<TankMovement>();
-            _weapon = GetComponent<TankWeapon>();
+            _weapon = GetComponent<SimpleGun>();
         }
 
         private void Update()

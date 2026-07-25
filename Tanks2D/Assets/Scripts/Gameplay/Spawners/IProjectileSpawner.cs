@@ -6,6 +6,6 @@ namespace Gameplay.Spawners
 {
     public interface IProjectileSpawner : IService, IInit
     {
-        BasicProjectile Spawn(ProjectileID projectileID, Vector2 position, Quaternion rotation);
+        BasicProjectile SpawnProjectile(ProjectileID projectileID);
     }
 }

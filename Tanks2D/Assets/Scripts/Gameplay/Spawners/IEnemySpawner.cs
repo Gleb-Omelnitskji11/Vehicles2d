@@ -6,6 +6,6 @@ namespace Gameplay.Spawners
 {
     public interface IEnemySpawner : IService, IInit
     {
-        Tank SpawnEnemy(EnemyType enemyType);
+        Vehicle SpawnEnemy(EnemyType enemyType);
     }
 }

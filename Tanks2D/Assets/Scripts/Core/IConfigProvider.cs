@@ -7,7 +7,7 @@ namespace Core
     public interface IConfigProvider : IService
     {
         UniTask LoadConfigAsync();
-        TankConfigScript TankConfig { get; }
+        VehicleConfigScript VehicleConfig { get; }
         ProjectileConfigScript ProjectileConfig { get; }
     }
 }

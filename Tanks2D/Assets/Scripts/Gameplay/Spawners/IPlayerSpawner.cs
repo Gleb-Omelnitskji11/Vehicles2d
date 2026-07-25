@@ -3,6 +3,6 @@ namespace Gameplay.Spawners
 {
     public interface IPlayerSpawner : IService, IInit
     {
-        Tank SpawnPlayer();
+        Vehicle SpawnPlayer();
     }
 }

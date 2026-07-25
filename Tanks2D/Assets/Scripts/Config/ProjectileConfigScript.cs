@@ -8,25 +8,25 @@ namespace Config
     [CreateAssetMenu(fileName = "ProjectileConfig", menuName = "Configs/ProjectileConfig")]
     public class ProjectileConfigScript : ScriptableObject
     {
-        [SerializeField] private ProjectilePrefab[] _projectilePrefabs = new ProjectilePrefab[1];
+        [SerializeField] private ProjectileData[] _projectileData= new ProjectileData[1];
 
         public BasicProjectile GetProjectilePrefab(ProjectileID projectileID)
         {
-            foreach (var projectile in _projectilePrefabs)
+            foreach (var projectileData in _projectileData)
             {
-                if (projectile.ProjectileID == projectileID)
+                if (projectileData.ProjectileID == projectileID)
                 {
-                    return projectile.Prefab;
+                    return projectileData.Prefab;
                 }
             }
             
-            Debug.LogError($"Projectile Prefab {projectileID} not found");
-            throw new Exception("Projectile Prefab Not Found");
+            Debug.LogError($"Projectile Data {projectileID} not found");
+            throw new Exception("Projectile Data Not Found");
         }
         
         
         [Serializable]
-        public class ProjectilePrefab
+        public class ProjectileData
         {
             public ProjectileID ProjectileID;
             public BasicProjectile Prefab;
