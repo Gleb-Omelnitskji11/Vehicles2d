@@ -9,6 +9,7 @@ namespace UI
     public class PausePopup : BasicPopup
     {
         [SerializeField] private Button _resumeButton;
+        [SerializeField] private Button _restartButton;
         [SerializeField] private Button _saveButton;
         [SerializeField] private Button _loadButton;
         [SerializeField] private Button _quitButton;
@@ -17,15 +18,15 @@ namespace UI
         private void Awake()
         {
             _resumeButton.onClick.AddListener(Resume);
+            _restartButton.onClick.AddListener(Restart);
             _saveButton.onClick.AddListener(Save);
             _loadButton.onClick.AddListener(Load);
             _quitButton.onClick.AddListener(Quit);
         }
 
-        private void Init()
+        private void Start()
         {
             _gameProgressor = Services.Get<GameProgressor>();
-            
         }
 
         public override void Open()
@@ -42,6 +43,12 @@ namespace UI
         
         private void Resume()
         {
+            Close();
+        }
+        
+        private void Restart()
+        {
+            _gameProgressor.RepeatGame();
             Close();
         }
 
