@@ -36,6 +36,12 @@ namespace Gameplay
             BasicUnitHealth.ResetData();
         }
 
+        public void TurnOff()
+        {
+            gameObject.SetActive(false);
+            Died?.Invoke(this, true);
+        }
+
         private void SetTeam(Team team)
         {
             _teamHighlight.color = team == Team.Ally ? Color.green : Color.red;
@@ -66,8 +72,8 @@ namespace Gameplay
 
         private void OnDie()
         {
-            Died?.Invoke(this);
             gameObject.SetActive(false);
+            Died?.Invoke(this, false);
         }
 
         private void OnTakeDamage()
@@ -78,7 +84,7 @@ namespace Gameplay
 
         public event Action<Collision2D> OnCollision;
         
-        public event Action<Vehicle> Died;
+        public event Action<Vehicle, bool> Died;
         public event Action<Vehicle> TakenDamage;
     }
 }

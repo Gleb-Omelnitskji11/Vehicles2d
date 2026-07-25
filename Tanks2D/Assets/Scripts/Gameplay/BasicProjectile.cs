@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class BasicProjectile : MonoBehaviour, IPooledObject
+    public class BasicProjectile : MonoBehaviour
     {
         [SerializeField] protected float _lifeTime = 5f;
         protected Vector2 StartDirection;
@@ -31,16 +31,16 @@ namespace Gameplay
             Despawn();
         }
 
-        protected virtual void Despawn()
+        public virtual void Despawn()
         {
+            gameObject.SetActive(false);
             if (_lifeTimeCoroutine != null)
             {
                 StopCoroutine(_lifeTimeCoroutine);
                 _lifeTimeCoroutine = null;
             }
 
-            Deactivated?.Invoke(this);
-            Destroy(gameObject);
+            Deactivated?.Invoke(this, true);
         }
 
         private void OnDisable()
@@ -57,24 +57,6 @@ namespace Gameplay
             Deactivated = null;
         }
 
-        public Action<BasicProjectile> Deactivated;
-        public bool IsActive { get; }
-        public string PoolKey { get; }
-        public IObjectPooler Pooler { get; }
-        
-        public void SetPoolData(IObjectPooler pooler, string poolKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Deactivate()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Activate()
-        {
-            throw new NotImplementedException();
-        }
+        public Action<BasicProjectile, bool> Deactivated;
     }
 }

@@ -6,8 +6,9 @@ using UnityEngine;
 
 namespace Gameplay.Spawners
 {
-    public class EnemySpawner : TankSpawner, IEnemySpawner
+    public class EnemySpawner : IEnemySpawner
     {
+        private VehicleSpawner _vehicleSpawner;
         private readonly Dictionary<EnemyType, Type> _enemyAi = new Dictionary<EnemyType, Type>()
         {
             { EnemyType.Simple, typeof(SimpleEnemy) }
@@ -17,20 +18,27 @@ namespace Gameplay.Spawners
         {
             { EnemyType.Simple, VehicleType.Tank}
         };
+
+        public void Init()
+        {
+            _vehicleSpawner = Services.Get<VehicleSpawner>();
+        }
         
         public Vehicle SpawnEnemy(EnemyType enemyType)
         {
-            var vehicleID = GetVehicleID(EnemyType.Simple);
-            Vehicle enemy = SpawnVehicle(vehicleID);
+            var vehicleID = GetVehicleID(EnemyType.Simple); //hardcode
+            Vehicle enemy = _vehicleSpawner.SpawnVehicle(vehicleID, false);
 
             Type enemyAi = GetAiComponent(enemyType);
             enemy.gameObject.AddComponent(enemyAi);
             
-            enemy.name = "Enemy";
-            enemy.tag = "Enemy";
-            enemy.gameObject.layer = LayerMask.NameToLayer("Enemy");
+            string enemyStr = "Enemy";
+            enemy.name = enemyStr;
+            enemy.tag = enemyStr;
+            enemy.gameObject.layer = LayerMask.NameToLayer(enemyStr);
 
             enemy.Init(new BasicUnitHealth(1), Team.Enemy);
+            enemy.gameObject.SetActive(true);
 
             return enemy;
         }

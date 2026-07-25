@@ -73,9 +73,18 @@ namespace Gameplay.Spawners
 
         private BasicProjectile CreateNewBullet()
         {
-            BasicProjectile prefab = _projectileConfig.GetProjectilePrefab(ProjectileID.Bullet);
+            ProjectileID projectileID = ProjectileID.Bullet;
+            BasicProjectile prefab = _projectileConfig.GetProjectilePrefab(projectileID);
             var projectile = SpawnNew(prefab);
+            SetPoolObject(projectile, projectileID);
             return projectile;
+        }
+
+        private void SetPoolObject(BasicProjectile projectile, ProjectileID projectileID)
+        {
+            PooledObject<BasicProjectile> pooledObject = new PooledObject<BasicProjectile>();
+            pooledObject.SetPoolableData(_pooler, GetKey(projectileID));
+            projectile.Deactivated += pooledObject.Deactivate;
         }
         
         private BasicProjectile SpawnNew(BasicProjectile prefab)

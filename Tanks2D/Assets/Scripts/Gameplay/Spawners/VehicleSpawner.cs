@@ -9,25 +9,25 @@ using Object = UnityEngine.Object;
 
 namespace Gameplay
 {
-    public abstract class TankSpawner
+    public class VehicleSpawner : IService, IInit
     {
         private MapLoader _mapLoader;
-        protected TanksRegister VehicleRegister;
-        protected VehicleConfigScript VehicleConfig;
+        private TanksRegister _vehicleRegister;
+        private VehicleConfigScript _vehicleConfig;
         private IObjectPooler _pooler;
 
         private const int MaxSpawnAttempts = 10;
-        private const float Radius = 2.0f; 
+        private const float Radius = 2.0f;
         private const float SqrRadius = Radius * Radius;
 
-        public virtual void Init()
+        public void Init()
         {
             _mapLoader = Services.Get<MapLoader>();
-            VehicleRegister = Services.Get<TanksRegister>();
+            _vehicleRegister = Services.Get<TanksRegister>();
             var configProvider = Services.Get<IConfigProvider>();
             _pooler = Services.Get<IObjectPooler>();
-            VehicleConfig = configProvider.VehicleConfig;
-        
+            _vehicleConfig = configProvider.VehicleConfig;
+
             CreatePools();
         }
 
@@ -42,63 +42,91 @@ namespace Gameplay
                     prewarmCount: 0);
             }
         }
-        
-        protected Vehicle SpawnVehicle(VehicleType vehicleType)
+
+        public Vehicle SpawnVehicle(VehicleType vehicleType, bool isPlayer)
         {
+            if (isPlayer)
+            {
+                var prefab = _vehicleConfig.GetVehiclePrefab(VehicleType.Tank);
+                Vehicle player = Spawn(prefab);
+                SetTransform(player);
+                return player;
+            }
+
             string key = GetKey(vehicleType);
             Vehicle vehicle = _pooler.Get<Vehicle>(key);
+
+            _vehicleRegister.RegisterVehicle(vehicle);
             return vehicle;
         }
 
         private void OnGetFromPool(Vehicle vehicle)
         {
-            VehicleRegister.RegisterVehicle(vehicle);
+            SetTransform(vehicle);
         }
-        
+
+        private void SetTransform(Vehicle vehicle)
+        {
+            Vector2 position = GetClearSpawnPosition();
+            Vector2 dir = -position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+            vehicle.transform.position = position;
+            vehicle.transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+
         private void OnRealiseToPool(Vehicle vehicle)
         {
-            VehicleRegister.UnRegisterVehicle(vehicle);
+            _vehicleRegister.UnRegisterVehicle(vehicle);
+            vehicle.Reset();
         }
-        
+
         private Func<Vehicle> GetCreatorFunc(VehicleType vehicleType)
         {
             switch (vehicleType)
             {
                 case VehicleType.Tank:
-                    return CreateNewVehicle;
+                    return CreateTankForPool;
             }
 
             throw new InvalidOperationException();
         }
 
-        private Vehicle CreateNewVehicle()
+        private Vehicle CreateTankForPool()
         {
-            var prefab = VehicleConfig.GetVehiclePrefab(VehicleType.Tank);
+            var prefab = _vehicleConfig.GetVehiclePrefab(VehicleType.Tank);
+            return CreateObjectForPool(prefab);
+        }
+
+        private Vehicle CreateObjectForPool(GameObject prefab)
+        {
             var vehicle = Spawn(prefab);
+            SetPoolObject(vehicle, VehicleType.Tank);
             return vehicle;
+        }
+
+        private void SetPoolObject(Vehicle vehicle, VehicleType vehicleType)
+        {
+            PooledObject<Vehicle> pooledObject = new PooledObject<Vehicle>();
+            pooledObject.SetPoolableData(_pooler, GetKey(vehicleType));
+            vehicle.Died += pooledObject.Deactivate;
         }
 
         private Vehicle Spawn(GameObject prefab)
         {
-            Vector2 position = GetClearSpawnPosition();
-            Vector2 dir = -position;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-            var newObj = Object.Instantiate(prefab, position, Quaternion.Euler(0, 0, angle));
+            var newObj = Object.Instantiate(prefab);
             Vehicle tank = newObj.GetComponent<Vehicle>();
-            
-            VehicleRegister.RegisterVehicle(tank);
 
             return tank;
         }
-        
-        private Vector3 GetClearSpawnPosition()
+
+        private Vector2 GetClearSpawnPosition()
         {
-            Vector3 potentialPoint = Vector3.zero;
+            Vector2 potentialPoint = Vector3.zero;
             int attempts = 0;
 
             while (attempts < MaxSpawnAttempts)
             {
-                potentialPoint = _mapLoader.Map.GetRandomPoint();
+                potentialPoint = GetRandomPosition();
 
                 if (IsFree(potentialPoint))
                 {
@@ -107,14 +135,19 @@ namespace Gameplay
 
                 attempts++;
             }
-            
+
             Debug.LogWarning("[EnemySpawner] Could not find a completely clean spawn location. Spawned at random.");
             return potentialPoint;
         }
 
+        protected Vector2 GetRandomPosition()
+        {
+            return _mapLoader.Map.GetRandomPointOnBorder();
+        }
+
         private bool IsFree(Vector2 potentialPoint)
         {
-            foreach (var tank in VehicleRegister.ActiveTanks)
+            foreach (var tank in _vehicleRegister.ActiveTanks)
             {
                 if (IsNear(tank.transform.position, potentialPoint))
                 {
@@ -129,8 +162,8 @@ namespace Gameplay
         {
             return (pos1 - pos2).sqrMagnitude < SqrRadius;
         }
-        
-        
+
+
         private string GetKey(VehicleType type) => $"Vehicle_{type}";
     }
 }

@@ -1,8 +1,9 @@
 using Core;
 using Core.ServiceLocator;
+using Cysharp.Threading.Tasks;
 using Enums;
 using Gameplay.Spawners;
-using Object = UnityEngine.Object;
+using UnityEngine;
 
 namespace Gameplay
 {
@@ -11,14 +12,15 @@ namespace Gameplay
         private IPlayerSpawner _playerSpawner;
         private IEnemySpawner _enemySpawner;
         private TanksRegister _tankRegistry;
-
-        public GameStatus GameStatus { get; private set; }
-        private int _enemiesCount;
-        private LevelData _levelData;
-        private int _enemiesLess;
         private GamePopupsProvider _gamePopupsProvider;
         private ILevelLoader _levelLoader;
         private ProjectileRegister _projectileRegister;
+
+        public GameStatus GameStatus { get; private set; }
+        private int _enemiesCount;
+        private int _enemiesLess;
+
+        private LevelData _levelData;
 
         public void Init()
         {
@@ -53,6 +55,7 @@ namespace Gameplay
         {
             while (_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
             {
+                _enemiesLess--;
                 SpawnEnemy();
             }
         }
@@ -62,21 +65,29 @@ namespace Gameplay
             var enemy = _enemySpawner.SpawnEnemy(EnemyType.Simple);
             enemy.Died += OnEnemyDie;
             _enemiesCount++;
-            _enemiesLess--;
         }
 
-        private void OnEnemyDie(Vehicle tank)
+        private void OnEnemyDie(Vehicle tank, bool byManual)
         {
+            if (byManual) return;
+            tank.Died -= OnEnemyDie;
             _enemiesCount--;
-            Object.Destroy(tank.gameObject);
-            _tankRegistry.UnRegisterVehicle(tank);
-            SpawnEnemies();
 
             if (_enemiesCount == 0 && _enemiesLess == 0)
             {
                 GameStatus = GameStatus.Win;
                 _gamePopupsProvider.ResultPopup.Open();
             }
+            else
+            {
+                TrySpawnEnemies();
+            }
+        }
+
+        private async UniTask TrySpawnEnemies()
+        {
+            await UniTask.Delay(1000);
+            SpawnEnemies();
         }
 
         private void Clear()
@@ -84,23 +95,20 @@ namespace Gameplay
             while (_tankRegistry.ActiveTanks.Count > 0)
             {
                 var tank = _tankRegistry.ActiveTanks[0];
-                tank.gameObject.SetActive(false);
-                _tankRegistry.UnRegisterVehicle(tank);
-                Object.Destroy(tank.gameObject);
+                tank.TurnOff();
             }
 
             while (_projectileRegister.ActiveProjectile.Count > 0)
             {
                 var projectile = _projectileRegister.ActiveProjectile[0];
-                projectile.gameObject.SetActive(false);
-                _projectileRegister.UnRegisterProjectile(projectile);
-                Object.Destroy(projectile.gameObject);
+                projectile.Despawn();
             }
             GameStatus = GameStatus.NotStarted;
         }
 
-        private void OnPlayerDie(Vehicle tank)
+        private void OnPlayerDie(Vehicle tank, bool byManual)
         {
+            if (byManual) return;
             GameStatus = GameStatus.Lose;
             _gamePopupsProvider.ResultPopup.Open();
         }

@@ -23,6 +23,7 @@ namespace Core
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
             serviceLocator.Register<IObjectPooler>(new ObjectPooler());
+            serviceLocator.Register<VehicleSpawner>(new VehicleSpawner());
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
             serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());

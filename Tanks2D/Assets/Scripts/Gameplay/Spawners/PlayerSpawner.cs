@@ -1,25 +1,42 @@
+using Core.ServiceLocator;
 using Enums;
 using UnityEngine;
 
 namespace Gameplay.Spawners
 {
-    public class PlayerSpawner : TankSpawner, IPlayerSpawner
+    public class PlayerSpawner : IPlayerSpawner
     {
+        private VehicleSpawner _vehicleSpawner;
+        protected TanksRegister VehicleRegister;
+
+        public void Init()
+        {
+            VehicleRegister = Services.Get<TanksRegister>();
+            _vehicleSpawner = Services.Get<VehicleSpawner>();
+        }
+
         public Vehicle SpawnPlayer()
         {
-            Vehicle player = SpawnVehicle(VehicleType.Tank);
-            SimpleGun gun = player.gameObject.AddComponent<SimpleGun>();
+            if (VehicleRegister.Player != null)
+            {
+                Object.Destroy(VehicleRegister.Player.gameObject);
+                VehicleRegister.UnRegisterPlayer();
+            }
+            
+            Vehicle player = _vehicleSpawner.SpawnVehicle(VehicleType.Tank, true); //hardCode
+            SimpleGun gun = player.gameObject.AddComponent<SimpleGun>(); //move to AttackFactory
             player.gameObject.AddComponent<PlayerInput>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
-            
-            player.name = "Player";
-            player.tag = "Player";
-            player.gameObject.layer = LayerMask.NameToLayer("Player");
-            
+
+            string playerString = "Player";
+            player.name = playerString;
+            player.tag = playerString;
+            player.gameObject.layer = LayerMask.NameToLayer(playerString);
+
             player.Init(new BasicUnitHealth(1), Team.Ally);
+            VehicleRegister.RegisterPlayer(player);
 
             return player;
         }
-        
     }
 }
