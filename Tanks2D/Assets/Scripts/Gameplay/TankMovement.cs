@@ -20,7 +20,8 @@ namespace Gameplay
 
         public void Move(float move, float turn)
         {
-            if (move == 0f) turn = 0f;
+            if (move == 0f) turn = 0f; // from test description: "no move withous W/S"
+            if(move <= 0f) turn *= -1f; //not Invert
             _moveInput = move;
             _turnInput = turn;
         }
