@@ -19,9 +19,12 @@ namespace Gameplay.Spawners
             { EnemyType.Simple, VehicleType.Tank}
         };
 
+        private GameInstance _gameInstance;
+
         public void Init()
         {
             _vehicleSpawner = Services.Get<VehicleSpawner>();
+            _gameInstance = Services.Get<GameInstance>();
         }
         
         public Vehicle SpawnEnemy(EnemyType enemyType)
@@ -29,8 +32,17 @@ namespace Gameplay.Spawners
             var vehicleID = GetVehicleID(EnemyType.Simple); //hardcode
             Vehicle enemy = _vehicleSpawner.SpawnVehicle(vehicleID, false);
 
+            if (!enemy.Configured)
+                SetupEnemy(enemy, enemyType);
+            
+            enemy.gameObject.SetActive(true);
+            return enemy;
+        }
+
+        private void SetupEnemy(Vehicle enemy, EnemyType enemyType)
+        {
             Type enemyAi = GetAiComponent(enemyType);
-            enemy.gameObject.AddComponent(enemyAi);
+            var ai =enemy.gameObject.AddComponent(enemyAi);
             
             string enemyStr = "Enemy";
             enemy.name = enemyStr;
@@ -38,9 +50,8 @@ namespace Gameplay.Spawners
             enemy.gameObject.layer = LayerMask.NameToLayer(enemyStr);
 
             enemy.Init(new BasicUnitHealth(1), Team.Enemy);
-            enemy.gameObject.SetActive(true);
-
-            return enemy;
+            if(ai is IUpdatable bot)
+                _gameInstance.Register(bot);
         }
         
         private VehicleType GetVehicleID(EnemyType enemyType)

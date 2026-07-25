@@ -15,12 +15,14 @@ namespace Gameplay.Spawners
         private GameObject _projectileParent;
         private ProjectileRegister _projectileRegister;
         private IObjectPooler _pooler;
+        private GameInstance _gameInstance;
 
         public void Init()
         {
             var configProvider = Services.Get<IConfigProvider>();
             _projectileRegister = Services.Get<ProjectileRegister>();
             _pooler = Services.Get<IObjectPooler>();
+            _gameInstance = Services.Get<GameInstance>();
             
             _projectileConfig = configProvider.ProjectileConfig;
             _projectileParent = new GameObject
@@ -77,6 +79,9 @@ namespace Gameplay.Spawners
             BasicProjectile prefab = _projectileConfig.GetProjectilePrefab(projectileID);
             var projectile = SpawnNew(prefab);
             SetPoolObject(projectile, projectileID);
+            
+            if(projectile is IUpdatable updatable)
+                _gameInstance.Register(updatable);
             return projectile;
         }
 

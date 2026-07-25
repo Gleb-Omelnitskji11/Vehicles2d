@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class Bullet : BasicProjectile
+    public class Bullet : BasicProjectile, IUpdatable
     {
         [SerializeField] private float _speed = 10f;
         [SerializeField] protected int _damage = 1;
 
-        private void Update()
+        public void OnUpdate()
         {
             transform.position += (Vector3)(StartDirection * _speed * Time.deltaTime);
         }

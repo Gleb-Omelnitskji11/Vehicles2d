@@ -24,18 +24,6 @@ namespace UI
         {
             base.Open();
             Setup();
-            _anim.onComplete += () => ScaleTime(0.001f);
-        }
-
-        public override void Close()
-        {
-            base.Close();
-            ScaleTime(1f);
-        }
-
-        private void ScaleTime(float timeScale)
-        {
-            Time.timeScale = timeScale;
         }
 
         private void Setup()

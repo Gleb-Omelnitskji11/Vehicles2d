@@ -15,6 +15,7 @@ namespace Gameplay
         private TanksRegister _vehicleRegister;
         private VehicleConfigScript _vehicleConfig;
         private IObjectPooler _pooler;
+        private GameInstance _gameInstance;
 
         private const int MaxSpawnAttempts = 10;
         private const float Radius = 2.0f;
@@ -26,8 +27,9 @@ namespace Gameplay
             _vehicleRegister = Services.Get<TanksRegister>();
             var configProvider = Services.Get<IConfigProvider>();
             _pooler = Services.Get<IObjectPooler>();
+            _gameInstance = Services.Get<GameInstance>();
+            
             _vehicleConfig = configProvider.VehicleConfig;
-
             CreatePools();
         }
 
@@ -115,6 +117,8 @@ namespace Gameplay
         {
             var newObj = Object.Instantiate(prefab);
             Vehicle tank = newObj.GetComponent<Vehicle>();
+            var mover = tank.GetComponent<TankMovement>();
+            _gameInstance.Register(mover);
 
             return tank;
         }
@@ -140,7 +144,7 @@ namespace Gameplay
             return potentialPoint;
         }
 
-        protected Vector2 GetRandomPosition()
+        private Vector2 GetRandomPosition()
         {
             return _mapLoader.Map.GetRandomPointOnBorder();
         }

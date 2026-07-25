@@ -16,30 +16,30 @@ namespace UI
 
         private void Awake()
         {
-            _gameProgressor = Services.Get<GameProgressor>();
             _resumeButton.onClick.AddListener(Resume);
             _saveButton.onClick.AddListener(Save);
             _loadButton.onClick.AddListener(Load);
             _quitButton.onClick.AddListener(Quit);
         }
 
+        private void Init()
+        {
+            _gameProgressor = Services.Get<GameProgressor>();
+            
+        }
+
         public override void Open()
         {
             base.Open();
-            _anim.onComplete += () => ScaleTime(0.001f);
+            _gameProgressor.Pause();
         }
 
         public override void Close()
         {
             base.Close();
-            ScaleTime(1f);
+            _anim.onComplete += () => _gameProgressor.Resume();
         }
-
-        private void ScaleTime(float timeScale)
-        {
-            Time.timeScale = timeScale;
-        }
-
+        
         private void Resume()
         {
             Close();

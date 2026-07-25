@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Gameplay
 {
     [RequireComponent(typeof(TankMovement))]
-    public class PlayerInput : MonoBehaviour
+    public class PlayerInput : MonoBehaviour, IUpdatable
     {
         private TankMovement _movement;
         private SimpleGun _weapon;
@@ -14,7 +14,7 @@ namespace Gameplay
             _weapon = GetComponent<SimpleGun>();
         }
 
-        private void Update()
+        public void OnUpdate()
         {
             float move = Input.GetAxisRaw("Vertical");
             float turn = Input.GetAxisRaw("Horizontal");

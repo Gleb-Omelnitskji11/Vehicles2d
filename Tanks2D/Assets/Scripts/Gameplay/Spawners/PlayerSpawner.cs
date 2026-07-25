@@ -8,11 +8,13 @@ namespace Gameplay.Spawners
     {
         private VehicleSpawner _vehicleSpawner;
         protected TanksRegister VehicleRegister;
+        private GameInstance _gameInstance;
 
         public void Init()
         {
             VehicleRegister = Services.Get<TanksRegister>();
             _vehicleSpawner = Services.Get<VehicleSpawner>();
+            _gameInstance = Services.Get<GameInstance>();
         }
 
         public Vehicle SpawnPlayer()
@@ -20,12 +22,16 @@ namespace Gameplay.Spawners
             if (VehicleRegister.Player != null)
             {
                 Object.Destroy(VehicleRegister.Player.gameObject);
+                var input = VehicleRegister.Player.GetComponent<PlayerInput>();
+                var movement = VehicleRegister.Player.GetComponent<TankMovement>();
+                _gameInstance.Unregister(input);
+                _gameInstance.Unregister(movement);
                 VehicleRegister.UnRegisterPlayer();
             }
-            
+
             Vehicle player = _vehicleSpawner.SpawnVehicle(VehicleType.Tank, true); //hardCode
             SimpleGun gun = player.gameObject.AddComponent<SimpleGun>(); //move to AttackFactory
-            player.gameObject.AddComponent<PlayerInput>();
+            var playerInput = player.gameObject.AddComponent<PlayerInput>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
 
             string playerString = "Player";
@@ -35,6 +41,7 @@ namespace Gameplay.Spawners
 
             player.Init(new BasicUnitHealth(1), Team.Ally);
             VehicleRegister.RegisterPlayer(player);
+            _gameInstance.Register(playerInput);
 
             return player;
         }

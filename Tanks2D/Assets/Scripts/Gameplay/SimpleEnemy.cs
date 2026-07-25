@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 namespace Gameplay
 {
     [RequireComponent(typeof(TankMovement))]
-    public class SimpleEnemy : MonoBehaviour
+    public class SimpleEnemy : MonoBehaviour, IUpdatable
     {
         [Header("Direction")]
         [SerializeField] private float _minDirectionChangeTime = 2f;
@@ -53,7 +53,7 @@ namespace Gameplay
             tank.OnCollision += OnCollision;
         }
 
-        private void Update()
+        public void OnUpdate()
         {
             FindPlayer();
 

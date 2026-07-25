@@ -6,5 +6,6 @@ namespace Enums
         Running,
         Win,
         Lose,
+        Pause
     }
 }

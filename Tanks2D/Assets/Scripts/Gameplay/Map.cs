@@ -5,7 +5,7 @@ namespace Gameplay
     public class Map : MonoBehaviour
     {
         [SerializeField] private Vector2 _size;
-        [SerializeField] private Vector2 _padding = new Vector2(3f, 4f);
+        [SerializeField] private Vector2 _padding = new Vector2(2f, 2f);
         
         public Vector2 Size => _size;
         

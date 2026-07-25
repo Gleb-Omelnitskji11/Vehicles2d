@@ -1,6 +1,7 @@
 using System;
 using Enums;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay
 {
@@ -8,18 +9,19 @@ namespace Gameplay
     {
         [SerializeField] private SpriteRenderer _teamHighlight;
         [SerializeField] private Rigidbody2D _rigidbody;
-        private bool _configured;
+        public  bool Configured { get; private set; }
         public Team Team { get; private set; }
 
         public BasicUnitHealth BasicUnitHealth { get; private set; }
 
         public void Init(BasicUnitHealth basicUnitHealth, Team team)
         {
+            if (Configured) return;
             BasicUnitHealth = basicUnitHealth;
             BasicUnitHealth.OnTakeDamage += OnTakeDamage;
             BasicUnitHealth.OnDeath += OnDie;
             SetTeam(team);
-            _configured = true;
+            Configured = true;
         }
 
         private void OnDestroy()
@@ -50,14 +52,14 @@ namespace Gameplay
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (!_configured) return;
+            if (!Configured) return;
             
             OnCollision?.Invoke(collision);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (!_configured) return;
+            if (!Configured) return;
             string tag = collision.gameObject.tag;
 
             if (tag.Equals("Projectile"))

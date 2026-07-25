@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Gameplay
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    public class TankMovement : MonoBehaviour
+    public class TankMovement : MonoBehaviour, IFixedUpdatable
     {
         [SerializeField] private float _moveSpeed = 4;
         [SerializeField] private float _rotationSpeed = 120;
@@ -26,7 +26,7 @@ namespace Gameplay
             _turnInput = turn;
         }
 
-        private void FixedUpdate()
+        public void OnFixedUpdate()
         {
             _rb.MoveRotation(_rb.rotation - _turnInput * _rotationSpeed * Time.fixedDeltaTime);
             

@@ -10,6 +10,7 @@ namespace Core
     {
         [SerializeField] private MapLoader _mapLoader;
         [SerializeField] private GamePopupsProvider _gamePopupsProvider;
+        [SerializeField] private GameInstance _gameInstance;
 
         private void Awake()
         {
@@ -19,6 +20,7 @@ namespace Core
                 return;
             }
 
+            serviceLocator.Register<GameInstance>(_gameInstance);
             serviceLocator.Register<MapLoader>(_mapLoader);
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
@@ -29,6 +31,7 @@ namespace Core
             serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());
             serviceLocator.Register<GamePopupsProvider>(_gamePopupsProvider);
             serviceLocator.Register<ILevelLoader>(new LevelLoader());
+            serviceLocator.Register<GameTimerService>(new GameTimerService());
             serviceLocator.Register<GameProgressor>(new GameProgressor());
 
             StartGame();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Core;
 using Core.ServiceLocator;
 using Cysharp.Threading.Tasks;
@@ -21,6 +22,10 @@ namespace Gameplay
         private int _enemiesLess;
 
         private LevelData _levelData;
+        private UniTask _awaitOperation;
+        private GameTimerService _gameTimerService;
+        private readonly List<Timer> _timers = new List<Timer>();
+        private GameInstance _gameInstance;
 
         public void Init()
         {
@@ -30,6 +35,8 @@ namespace Gameplay
             _gamePopupsProvider = Services.Get<GamePopupsProvider>();
             _levelLoader = Services.Get<ILevelLoader>();
             _projectileRegister = Services.Get<ProjectileRegister>();
+            _gameTimerService = Services.Get<GameTimerService>();
+            _gameInstance = Services.Get<GameInstance>();
         }
 
         public void RepeatGame()
@@ -51,6 +58,16 @@ namespace Gameplay
             GameStatus = GameStatus.Running;
         }
 
+        public void Pause()
+        {
+            GameStatus = GameStatus.Pause;
+        }
+
+        public void Resume()
+        {
+            GameStatus = GameStatus.Running;
+        }
+
         private void SpawnEnemies()
         {
             while (_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
@@ -58,6 +75,19 @@ namespace Gameplay
                 _enemiesLess--;
                 SpawnEnemy();
             }
+        }
+        
+        private void SpawnNewEnemies()
+        {
+            if(_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
+            {
+                _enemiesLess--;
+                SpawnEnemy();
+            }
+
+            var timer = _timers[0];
+            _timers.RemoveAt(0);
+            _gameInstance.Unregister(timer);
         }
 
         private void SpawnEnemy()
@@ -80,14 +110,10 @@ namespace Gameplay
             }
             else
             {
-                TrySpawnEnemies();
+                var timer = _gameTimerService.AwaitGameOperation(1f, SpawnNewEnemies);
+                _timers.Add(timer);
+                _gameInstance.Register(timer);
             }
-        }
-
-        private async UniTask TrySpawnEnemies()
-        {
-            await UniTask.Delay(1000);
-            SpawnEnemies();
         }
 
         private void Clear()
@@ -103,6 +129,13 @@ namespace Gameplay
                 var projectile = _projectileRegister.ActiveProjectile[0];
                 projectile.Despawn();
             }
+
+            foreach (var timer in _timers)
+            {
+                timer.Cancel();
+            }
+
+            _timers.Clear();
             GameStatus = GameStatus.NotStarted;
         }
 
