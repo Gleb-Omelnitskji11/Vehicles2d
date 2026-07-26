@@ -799,6 +799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _teamHighlight: {fileID: 5150225508423579922}
   _rigidbody: {fileID: 3412824173772984637}
+  _trail: {fileID: 2379936489040803093}
 --- !u!114 &2626227074341220565
 MonoBehaviour:
   m_ObjectHideFlags: 0

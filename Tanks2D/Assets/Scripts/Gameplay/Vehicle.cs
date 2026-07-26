@@ -10,6 +10,7 @@ namespace Gameplay
     {
         [SerializeField] private SpriteRenderer _teamHighlight;
         [SerializeField] private Rigidbody2D _rigidbody;
+        [SerializeField] private TrailRenderer _trail;
         public  bool Configured { get; private set; }
         public Team Team { get; private set; }
 
@@ -37,6 +38,7 @@ namespace Gameplay
         public void Reset()
         {
             BasicUnitHealth.ResetData();
+            _trail.Clear();
         }
 
         public void TurnOff()

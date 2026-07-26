@@ -1,11 +1,10 @@
-using System;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Gameplay.Enemy
 {
-    [RequireComponent(typeof(TankMovement))]
+    [RequireComponent(typeof(VehicleMovement))]
     public class SimpleEnemy : MonoBehaviour, IUpdatable
     {
         [Header("Direction")]
@@ -28,7 +27,7 @@ namespace Gameplay.Enemy
         [SerializeField] private float _playerViewDistance = 16f;
 
         private Transform _player;
-        private TankMovement _movement;
+        private VehicleMovement _movement;
 
         private Vector2 _targetDirection;
 
@@ -42,7 +41,7 @@ namespace Gameplay.Enemy
         {
             _obstacleMask = LayerMask.GetMask("Wall", "Enemy");
             _findMask = LayerMask.GetMask("Player");
-            _movement = GetComponent<TankMovement>();
+            _movement = GetComponent<VehicleMovement>();
             _playerFinder = new PlayerFinder(transform, _obstacleMask);
         }
 

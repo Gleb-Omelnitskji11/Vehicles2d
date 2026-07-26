@@ -46,10 +46,8 @@ namespace Gameplay.Spawners
         private void ClearOldPlayer()
         {
             var input = VehicleRegister.Player.GetComponent<PlayerInput>();
-            var movement = VehicleRegister.Player.GetComponent<TankMovement>();
             Object.Destroy(VehicleRegister.Player.gameObject);
             _gameInstance.Unregister(input);
-            _gameInstance.Unregister(movement);
             VehicleRegister.UnRegisterPlayer();
         }
     }

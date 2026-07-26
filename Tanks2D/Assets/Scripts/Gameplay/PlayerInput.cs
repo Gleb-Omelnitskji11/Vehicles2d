@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    [RequireComponent(typeof(TankMovement))]
+    [RequireComponent(typeof(VehicleMovement))]
     public class PlayerInput : MonoBehaviour, IUpdatable
     {
-        private TankMovement _movement;
+        private VehicleMovement _movement;
         private SimpleGun _weapon;
 
         private void Awake()
         {
-            _movement = GetComponent<TankMovement>();
+            _movement = GetComponent<VehicleMovement>();
             _weapon = GetComponent<SimpleGun>();
         }
 

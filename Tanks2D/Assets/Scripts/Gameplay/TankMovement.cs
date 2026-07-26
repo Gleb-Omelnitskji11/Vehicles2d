@@ -1,25 +1,31 @@
+using System;
+using Core.ServiceLocator;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    public class TankMovement : MonoBehaviour, IUpdatable
+    public class TankMovement : VehicleMovement, IUpdatable
     {
         [SerializeField] private float _moveSpeed = 4;
         [SerializeField] private float _rotationSpeed = 120;
 
-        private Rigidbody2D _rb;
-
         private float _moveInput;
         private float _turnInput;
+        private GameInstance _gameInstance;
 
-        private void Awake()
+        private void Start()
         {
-            _rb = GetComponent<Rigidbody2D>();
+            _gameInstance = Services.Get<GameInstance>();
+            _gameInstance.Register(this);
         }
 
-        public void Move(float move, float turn)
+        private void OnDestroy()
+        {
+            _gameInstance.Unregister(this);
+        }
+
+        public override void Move(float move, float turn)
         {
             if (move == 0f) turn = 0f; // from test description: "no move withous W/S"
             _moveInput = move;
