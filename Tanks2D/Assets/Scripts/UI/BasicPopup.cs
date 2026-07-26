@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -13,6 +14,7 @@ namespace UI
         [SerializeField] protected float _closeTime = .3f;
         protected TweenerCore<float, float, FloatOptions> _anim;
 
+        public bool IsOpen => Canvas.enabled;
 
         public virtual void Open()
         {
@@ -22,6 +24,7 @@ namespace UI
             CanvasGroup.interactable = true;
             CanvasGroup.blocksRaycasts = true;
             _anim = CanvasGroup.DOFade(1f, _appearTime);
+            OnShow?.Invoke(this);
         }
 
 
@@ -37,6 +40,11 @@ namespace UI
                 CanvasGroup.interactable = false;
                 CanvasGroup.blocksRaycasts = false;
             };
+
+            OnClose?.Invoke(this);
         }
+
+        public event Action<BasicPopup> OnShow;
+        public event Action<BasicPopup> OnClose;
     }
 }

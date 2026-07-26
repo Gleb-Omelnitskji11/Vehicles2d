@@ -23,12 +23,7 @@ namespace Gameplay.Spawners
         {
             if (VehicleRegister.Player != null)
             {
-                Object.Destroy(VehicleRegister.Player.gameObject);
-                var input = VehicleRegister.Player.GetComponent<PlayerInput>();
-                var movement = VehicleRegister.Player.GetComponent<TankMovement>();
-                _gameInstance.Unregister(input);
-                _gameInstance.Unregister(movement);
-                VehicleRegister.UnRegisterPlayer();
+                ClearOldPlayer();
             }
 
             Vehicle player = _vehicleSpawner.SpawnVehicle(VehicleType.Tank, true); //hardCode
@@ -46,6 +41,16 @@ namespace Gameplay.Spawners
             _gameInstance.Register(playerInput);
 
             return player;
+        }
+
+        private void ClearOldPlayer()
+        {
+            var input = VehicleRegister.Player.GetComponent<PlayerInput>();
+            var movement = VehicleRegister.Player.GetComponent<TankMovement>();
+            Object.Destroy(VehicleRegister.Player.gameObject);
+            _gameInstance.Unregister(input);
+            _gameInstance.Unregister(movement);
+            VehicleRegister.UnRegisterPlayer();
         }
     }
 }

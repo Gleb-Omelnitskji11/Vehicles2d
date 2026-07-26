@@ -67,6 +67,8 @@ namespace Gameplay
 
         public void Resume()
         {
+            if (GameStatus != GameStatus.Pause)
+                return;
             GameStatus = GameStatus.Running;
         }
 
@@ -108,7 +110,7 @@ namespace Gameplay
             if (_enemiesCount == 0 && _enemiesLess == 0)
             {
                 GameStatus = GameStatus.Win;
-                _gamePopupsProvider.ResultPopup.Open();
+                _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
             }
             else
             {
@@ -145,7 +147,7 @@ namespace Gameplay
         {
             if (byManual) return;
             GameStatus = GameStatus.Lose;
-            _gamePopupsProvider.ResultPopup.Open();
+            _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
         }
     }
 }

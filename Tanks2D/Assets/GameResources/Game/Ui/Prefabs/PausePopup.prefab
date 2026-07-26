@@ -109,9 +109,9 @@ RectTransform:
   - {fileID: 9055534363952868878}
   m_Father: {fileID: 6190431379068620854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 166.32616, y: -175.0071}
   m_SizeDelta: {x: 273.7905, y: 51.3357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5254862225238777855
@@ -191,7 +191,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 8504192840984878655}
   m_OnClick:
     m_PersistentCalls:
@@ -512,7 +512,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2095253806201471677}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
   m_Name: 
@@ -908,9 +908,9 @@ RectTransform:
   - {fileID: 3788246610864975877}
   m_Father: {fileID: 6190431379068620854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 166.32616, y: -105.00426}
   m_SizeDelta: {x: 273.7905, y: 51.3357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8420233114260705582
@@ -1029,9 +1029,9 @@ RectTransform:
   - {fileID: 1023067976064307028}
   m_Father: {fileID: 6190431379068620854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 166.32616, y: -245.00993}
   m_SizeDelta: {x: 273.7905, y: 51.3357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5007151408349718310
@@ -1111,7 +1111,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 57617469270149272}
   m_OnClick:
     m_PersistentCalls:
@@ -1319,7 +1319,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5751739527587876103}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -1530,9 +1530,9 @@ RectTransform:
   - {fileID: 8323593560891614426}
   m_Father: {fileID: 6190431379068620854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 166.32616, y: -35.00142}
   m_SizeDelta: {x: 273.7905, y: 51.3357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4407307822512379801
@@ -1785,9 +1785,9 @@ RectTransform:
   - {fileID: 4285325445148126689}
   m_Father: {fileID: 6190431379068620854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 166.32616, y: -315.01276}
   m_SizeDelta: {x: 273.7905, y: 51.3357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3723194144394963390

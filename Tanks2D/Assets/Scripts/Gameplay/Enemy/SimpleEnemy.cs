@@ -70,7 +70,6 @@ namespace Gameplay.Enemy
         public void OnUpdate()
         {
             _chasingPlayer = _playerFinder.TryFind(ref _player);
-            //FindPlayer();
 
             if (_chasingPlayer)
             {
@@ -186,12 +185,11 @@ namespace Gameplay.Enemy
 
             if(!_chasingPlayer)
             {
-                bool isCoolideWithEnemy = obj.CompareTag("Enemy");
-                    PickRandomDirection(!isCoolideWithEnemy);
+                PickRandomDirection();
             }
         }
 
-        private void PickRandomDirection(bool withbackwards = true)
+        private void PickRandomDirection()
         {
             if (_chasingPlayer) return;
             bool block;
@@ -204,7 +202,7 @@ namespace Gameplay.Enemy
                 attempt++;
             } while (block && attempt < MaxFindWayAttempts);
             
-            if(!withbackwards && block && attempt == MaxFindWayAttempts)
+            if(block && attempt == MaxFindWayAttempts)
                 _backward = true;
 
             _timer = Random.Range(_minDirectionChangeTime, _maxDirectionChangeTime);
