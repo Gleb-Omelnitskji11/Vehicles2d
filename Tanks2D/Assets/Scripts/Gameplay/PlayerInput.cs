@@ -1,3 +1,5 @@
+using Gameplay.Attacking;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay
@@ -18,6 +20,7 @@ namespace Gameplay
         {
             float move = Input.GetAxisRaw("Vertical");
             float turn = Input.GetAxisRaw("Horizontal");
+            if(move <= 0f) turn *= -1f; //not Invert
             _movement.Move(move, turn);
             
             if (Input.GetKey(KeyCode.Mouse0))

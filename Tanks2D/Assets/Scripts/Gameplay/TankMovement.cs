@@ -1,9 +1,10 @@
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    public class TankMovement : MonoBehaviour, IFixedUpdatable
+    public class TankMovement : MonoBehaviour, IUpdatable
     {
         [SerializeField] private float _moveSpeed = 4;
         [SerializeField] private float _rotationSpeed = 120;
@@ -21,17 +22,17 @@ namespace Gameplay
         public void Move(float move, float turn)
         {
             if (move == 0f) turn = 0f; // from test description: "no move withous W/S"
-            if(move <= 0f) turn *= -1f; //not Invert
             _moveInput = move;
             _turnInput = turn;
         }
 
-        public void OnFixedUpdate()
+        public void OnUpdate()
         {
-            _rb.MoveRotation(_rb.rotation - _turnInput * _rotationSpeed * Time.fixedDeltaTime);
-            
-            Vector2 movement = (Vector2)transform.up * (_moveInput * _moveSpeed * Time.fixedDeltaTime);
-            _rb.MovePosition(_rb.position + movement);
+            Transform tr = transform;
+
+            tr.Rotate(0f, 0f, -_turnInput * _rotationSpeed * Time.deltaTime);
+
+            tr.position += tr.up * (_moveInput * _moveSpeed * Time.deltaTime);
         }
     }
 }

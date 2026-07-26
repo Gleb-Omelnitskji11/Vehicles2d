@@ -3,7 +3,7 @@ using Enums;
 using Gameplay.Spawners;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.Attacking
 {
     public class SimpleGun : MonoBehaviour
     {

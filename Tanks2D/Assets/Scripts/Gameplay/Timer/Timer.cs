@@ -1,7 +1,8 @@
 using System;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.Timer
 {
     public class Timer : IUpdatable
     {

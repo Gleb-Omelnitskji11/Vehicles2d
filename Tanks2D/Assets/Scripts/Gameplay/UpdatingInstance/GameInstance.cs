@@ -3,7 +3,7 @@ using Core.ServiceLocator;
 using Enums;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.UpdatingInstance
 {
     public class GameInstance : MonoBehaviour, IService
     {

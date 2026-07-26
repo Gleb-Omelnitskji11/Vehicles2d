@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Core.ServiceLocator;
+using Gameplay.Attacking;
 
 namespace Gameplay
 {

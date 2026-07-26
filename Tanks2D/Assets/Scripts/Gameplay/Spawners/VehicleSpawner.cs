@@ -4,6 +4,7 @@ using Core;
 using Core.ObjectPool;
 using Core.ServiceLocator;
 using Enums;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

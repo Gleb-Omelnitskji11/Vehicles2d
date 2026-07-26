@@ -1,6 +1,7 @@
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.Attacking
 {
     public class Bullet : BasicProjectile, IUpdatable
     {

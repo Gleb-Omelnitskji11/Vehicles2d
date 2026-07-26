@@ -1,8 +1,8 @@
+using Gameplay.UpdatingInstance;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-namespace Gameplay
+namespace Gameplay.Enemy
 {
     [RequireComponent(typeof(TankMovement))]
     public class SimpleEnemy : MonoBehaviour, IUpdatable
@@ -14,7 +14,8 @@ namespace Gameplay
         [Header("Obstacle")]
         [SerializeField] private float _forwardCheckDistance = 2f;
         [SerializeField] private float _sideCheckDistance = 1.2f;
-        [SerializeField] private float _length = 0.37f;
+        [SerializeField] private float _backwardDistance = 0.37f;
+        [SerializeField] private int MaxFindWayAttempts = 10;
         [SerializeField] private LayerMask _obstacleMask;
         [SerializeField] private LayerMask _findMask;
 
@@ -34,12 +35,14 @@ namespace Gameplay
         private bool _avoiding;
         private bool _backward;
         private bool _chasingPlayer;
+        private PlayerFinder _playerFinder;
 
         private void Awake()
         {
             _obstacleMask = LayerMask.GetMask("Wall", "Enemy");
             _findMask = LayerMask.GetMask("Player");
             _movement = GetComponent<TankMovement>();
+            _playerFinder = new PlayerFinder(transform, _obstacleMask);
         }
 
         private void Start()
@@ -56,11 +59,12 @@ namespace Gameplay
 
         public void OnUpdate()
         {
-            FindPlayer();
+            _chasingPlayer = _playerFinder.TryFind(ref _player);
+            //FindPlayer();
 
             if (_chasingPlayer)
             {
-                _targetDirection = ((Vector2)transform.position - (Vector2)_player.position).normalized;
+                _targetDirection = ((Vector2)_player.position - (Vector2)transform.position).normalized;
             }
             else
             {
@@ -76,16 +80,25 @@ namespace Gameplay
 
         private void HandleObstacle()
         {
+            if (_chasingPlayer) return; // delete this if there are obstacles in field
             bool front = Physics2D.Raycast(transform.position, transform.up, _forwardCheckDistance, _obstacleMask);
 
             if (!front)
             {
                 _avoiding = false;
+                if(_backward)
+                {
+                    _backward = false;
+                    PickRandomDirection();
+                }
                 return;
             }
 
+            //if bot has an obstacle in front, he try to avoid
             _avoiding = true;
 
+            if (_backward)
+                return;
             Vector2 left = Quaternion.Euler(0, 0, 90) * transform.up;
             Vector2 right = Quaternion.Euler(0, 0, -90) * transform.up;
             bool leftBlocked = Physics2D.Raycast(transform.position, left, _sideCheckDistance, _obstacleMask);
@@ -102,8 +115,6 @@ namespace Gameplay
                 _targetDirection = right;
                 return;
             }
-
-            _targetDirection = -transform.up;
         }
 
         private void FindPlayer()
@@ -138,16 +149,17 @@ namespace Gameplay
             {
                 float absAngle = Mathf.Abs(angle);
                 var hit = Physics2D.Raycast(transform.position, transform.up, _forwardCheckDistance, _obstacleMask);
-                if (!_backward && (absAngle > _reverseUntilAngle && hit.distance <= _length))
+                bool isBackwardNeed = absAngle > _reverseUntilAngle && hit.distance <= _backwardDistance;
+                if (!_backward && isBackwardNeed)
                 {
                     _backward = true;
                 }
-                
-                if(_backward)
-                    move = -0.4f;
             }
 
-            _movement.Move(move, turn);
+            if (_backward)
+                move = -0.4f;
+            
+            _movement.Move(move, -turn);
         }
 
         private void OnCollision(Collision2D collision)
@@ -162,12 +174,28 @@ namespace Gameplay
                 }
             }
 
-            PickRandomDirection();
+            if(!_chasingPlayer)
+            {
+                bool isCoolideWithEnemy = obj.CompareTag("Enemy");
+                    PickRandomDirection(!isCoolideWithEnemy);
+            }
         }
 
-        private void PickRandomDirection()
+        private void PickRandomDirection(bool withbackwards = true)
         {
-            _targetDirection = Random.insideUnitCircle.normalized;
+            if (_chasingPlayer) return;
+            bool block;
+            int attempt = 0;
+            do
+            {
+                float angle = Random.Range(-90f, 90f);
+                _targetDirection = (Quaternion.Euler(0, 0, angle) * transform.up).normalized;
+                block = Physics2D.Raycast(transform.position, _targetDirection, 2 * _forwardCheckDistance, _obstacleMask);
+                attempt++;
+            } while (block && attempt < MaxFindWayAttempts);
+            
+            if(!withbackwards && block && attempt == MaxFindWayAttempts)
+                _backward = true;
 
             _timer = Random.Range(_minDirectionChangeTime, _maxDirectionChangeTime);
             _backward = false;
@@ -177,7 +205,14 @@ namespace Gameplay
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, transform.up * _playerViewDistance);
+            Gizmos.DrawRay(transform.position, transform.up * _forwardCheckDistance);
+            
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, 90) * transform.up * _sideCheckDistance);
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, -90) * transform.up * _sideCheckDistance);
+
         }
 #endif
     }

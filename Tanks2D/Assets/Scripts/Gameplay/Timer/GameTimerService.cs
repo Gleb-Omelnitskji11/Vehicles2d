@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using Core.ServiceLocator;
 
-namespace Gameplay
+namespace Gameplay.Timer
 {
     public class GameTimerService : IService
     {
-        private readonly List<Timer> _timers = new List<Timer>();
+        private readonly List<Gameplay.Timer.Timer> _timers = new List<Gameplay.Timer.Timer>();
 
-        public Timer AwaitGameOperation(float time, Action action)
+        public Gameplay.Timer.Timer AwaitGameOperation(float time, Action action)
         {
             foreach (var timer in _timers)
             {
@@ -19,14 +19,14 @@ namespace Gameplay
                 }
             }
 
-            Timer curTimer = CreateNewTimer();
+            Gameplay.Timer.Timer curTimer = CreateNewTimer();
             curTimer.SetupTimer(time, action);
             return curTimer;
         }
 
-        private Timer CreateNewTimer()
+        private Gameplay.Timer.Timer CreateNewTimer()
         {
-            var timer = new Timer();
+            var timer = new Gameplay.Timer.Timer();
             _timers.Add(timer);
             return timer;
         }

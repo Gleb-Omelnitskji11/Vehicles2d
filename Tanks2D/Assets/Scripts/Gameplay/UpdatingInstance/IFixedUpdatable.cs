@@ -1,4 +1,4 @@
-namespace Gameplay
+namespace Gameplay.UpdatingInstance
 {
     public interface IFixedUpdatable
     {

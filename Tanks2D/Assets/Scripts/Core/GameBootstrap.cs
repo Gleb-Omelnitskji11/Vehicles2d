@@ -2,6 +2,8 @@ using Core.ObjectPool;
 using Core.ServiceLocator;
 using Gameplay;
 using Gameplay.Spawners;
+using Gameplay.Timer;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Core

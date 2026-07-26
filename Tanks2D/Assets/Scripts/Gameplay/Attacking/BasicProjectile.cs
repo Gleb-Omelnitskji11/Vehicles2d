@@ -3,7 +3,7 @@ using System.Collections;
 using Enums;
 using UnityEngine;
 
-namespace Gameplay
+namespace Gameplay.Attacking
 {
     public class BasicProjectile : MonoBehaviour
     {

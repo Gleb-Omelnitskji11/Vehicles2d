@@ -4,6 +4,8 @@ using Core.ServiceLocator;
 using Cysharp.Threading.Tasks;
 using Enums;
 using Gameplay.Spawners;
+using Gameplay.Timer;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay
@@ -24,7 +26,7 @@ namespace Gameplay
         private LevelData _levelData;
         private UniTask _awaitOperation;
         private GameTimerService _gameTimerService;
-        private readonly List<Timer> _timers = new List<Timer>();
+        private readonly List<Timer.Timer> _timers = new List<Timer.Timer>();
         private GameInstance _gameInstance;
 
         public void Init()

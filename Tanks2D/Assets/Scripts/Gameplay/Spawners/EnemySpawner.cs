@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Core.ServiceLocator;
 using Enums;
+using Gameplay.Enemy;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay.Spawners

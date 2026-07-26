@@ -1,5 +1,7 @@
 using Core.ServiceLocator;
 using Enums;
+using Gameplay.Attacking;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay.Spawners
