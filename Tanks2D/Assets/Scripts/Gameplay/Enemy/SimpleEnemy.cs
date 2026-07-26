@@ -1,3 +1,4 @@
+using System;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -49,6 +50,15 @@ namespace Gameplay.Enemy
         {
             SetEvents();
             PickRandomDirection();
+        }
+
+        private void OnDisable()
+        {
+            _targetDirection = default;
+            _avoiding = false;
+            _backward = false;
+            _chasingPlayer = false;
+            _timer = 0f;
         }
 
         private void SetEvents()
