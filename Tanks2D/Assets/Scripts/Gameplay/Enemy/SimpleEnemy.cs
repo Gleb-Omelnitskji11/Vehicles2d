@@ -1,3 +1,4 @@
+using Core;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -39,8 +40,8 @@ namespace Gameplay.Enemy
 
         private void Awake()
         {
-            _obstacleMask = LayerMask.GetMask("Wall", "Enemy");
-            _findMask = LayerMask.GetMask("Player");
+            _obstacleMask = LayerMask.GetMask(Constants.Wall, Constants.Player);
+            _findMask = LayerMask.GetMask(Constants.Player);
             _movement = GetComponent<VehicleMovement>();
             _playerFinder = new PlayerFinder(transform, _obstacleMask);
         }
@@ -125,22 +126,6 @@ namespace Gameplay.Enemy
             }
         }
 
-        private void FindPlayer()
-        {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _playerViewDistance, _findMask);
-
-            if (hit.collider == null)
-            {
-                LoseTarget();
-            }
-            else
-            {
-                _player = hit.transform;
-                _chasingPlayer = true;
-                _avoiding = false;
-            }
-        }
-
         private void LoseTarget()
         {
             _chasingPlayer = false;
@@ -173,7 +158,7 @@ namespace Gameplay.Enemy
         private void OnCollision(Collision2D collision)
         {
             GameObject obj = collision.gameObject;
-            if (obj.CompareTag("Player"))
+            if (obj.CompareTag(Constants.Player))
             {
                 if (collision.gameObject.TryGetComponent<Vehicle>(out var player))
                 {

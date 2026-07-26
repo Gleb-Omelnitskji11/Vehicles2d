@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Core;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Enemy;
@@ -46,7 +47,7 @@ namespace Gameplay.Spawners
             Type enemyAi = GetAiComponent(enemyType);
             var ai =enemy.gameObject.AddComponent(enemyAi);
             
-            string enemyStr = "Enemy";
+            string enemyStr = Constants.Enemy;
             enemy.name = enemyStr;
             enemy.tag = enemyStr;
             enemy.gameObject.layer = LayerMask.NameToLayer(enemyStr);

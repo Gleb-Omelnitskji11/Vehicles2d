@@ -1,3 +1,4 @@
+using Core;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Attacking;
@@ -31,10 +32,9 @@ namespace Gameplay.Spawners
             var playerInput = player.gameObject.AddComponent<PlayerInput>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
 
-            string playerString = "Player";
-            player.name = playerString;
-            player.tag = playerString;
-            player.gameObject.layer = LayerMask.NameToLayer(playerString);
+            player.name = Constants.Player;
+            player.tag = Constants.Player;
+            player.gameObject.layer = LayerMask.NameToLayer(Constants.Player);
 
             player.Init(new BasicUnitHealth(1), Team.Ally);
             VehicleRegister.RegisterPlayer(player);

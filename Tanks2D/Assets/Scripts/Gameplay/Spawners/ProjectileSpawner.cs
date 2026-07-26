@@ -97,8 +97,8 @@ namespace Gameplay.Spawners
         private BasicProjectile SpawnNew(BasicProjectile prefab)
         {
             var projectile = Object.Instantiate(prefab, _projectileParent.transform);
-            projectile.tag = "Projectile";
-            projectile.gameObject.layer = LayerMask.NameToLayer("Projectile");
+            projectile.tag = Constants.Projectile;
+            projectile.gameObject.layer = LayerMask.NameToLayer(Constants.Projectile);
             _projectileRegister.RegisterProjectile(projectile);
             return projectile;
         }

@@ -32,7 +32,7 @@ namespace Core
 
         private void LoadNextScene()
         {
-            string sceneName = "GameScene";
+            string sceneName = Constants.GameScene;
             var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             if (operation == null)
             {
