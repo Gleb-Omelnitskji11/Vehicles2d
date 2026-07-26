@@ -4,6 +4,7 @@ using Gameplay;
 using Gameplay.Spawners;
 using Gameplay.Timer;
 using Gameplay.UpdatingInstance;
+using UI;
 using UnityEngine;
 
 namespace Core
@@ -13,6 +14,7 @@ namespace Core
         [SerializeField] private MapLoader _mapLoader;
         [SerializeField] private GamePopupsProvider _gamePopupsProvider;
         [SerializeField] private GameInstance _gameInstance;
+        [SerializeField] private ProgressVisualizer _progressVisualizer;
 
         private void Awake()
         {
@@ -34,6 +36,7 @@ namespace Core
             serviceLocator.Register<GamePopupsProvider>(_gamePopupsProvider);
             serviceLocator.Register<ILevelLoader>(new LevelLoader());
             serviceLocator.Register<GameTimerService>(new GameTimerService());
+            serviceLocator.Register<ProgressVisualizer>(_progressVisualizer);
             serviceLocator.Register<GameProgressor>(new GameProgressor());
 
             StartGame();

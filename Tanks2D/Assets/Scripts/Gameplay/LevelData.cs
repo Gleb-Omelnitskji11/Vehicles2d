@@ -5,8 +5,8 @@ namespace Gameplay
     [Serializable]
     public class LevelData
     {
-        public int EnemiesCount = 3;
-        public int EnemiesMax = 2;
+        public int EnemiesCount = 5;
+        public int EnemiesMax = 3;
 
         public LevelData GetCopy()
         {

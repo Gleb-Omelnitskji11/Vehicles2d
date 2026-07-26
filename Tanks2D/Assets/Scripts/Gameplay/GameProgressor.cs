@@ -6,6 +6,7 @@ using Enums;
 using Gameplay.Spawners;
 using Gameplay.Timer;
 using Gameplay.UpdatingInstance;
+using UI;
 using UnityEngine;
 
 namespace Gameplay
@@ -28,6 +29,7 @@ namespace Gameplay
         private GameTimerService _gameTimerService;
         private readonly List<Timer.Timer> _timers = new List<Timer.Timer>();
         private GameInstance _gameInstance;
+        private ProgressVisualizer _progressVisualizer;
 
         public void Init()
         {
@@ -39,6 +41,7 @@ namespace Gameplay
             _projectileRegister = Services.Get<ProjectileRegister>();
             _gameTimerService = Services.Get<GameTimerService>();
             _gameInstance = Services.Get<GameInstance>();
+            _progressVisualizer = Services.Get<ProgressVisualizer>();
         }
 
         public void RepeatGame()
@@ -55,7 +58,9 @@ namespace Gameplay
             _levelData = _levelLoader.LoadLevel(0);
             _enemiesCount = 0;
             _enemiesLess = _levelData.EnemiesCount;
+            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess);
             SpawnEnemies();
+            
 
             GameStatus = GameStatus.Running;
         }
@@ -80,10 +85,10 @@ namespace Gameplay
                 SpawnEnemy();
             }
         }
-        
+
         private void SpawnNewEnemies()
         {
-            if(_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
+            if (_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
             {
                 _enemiesLess--;
                 SpawnEnemy();
@@ -105,6 +110,7 @@ namespace Gameplay
         {
             tank.Died -= OnEnemyDie;
             _enemiesCount--;
+            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess);
             if (byManual) return;
 
             if (_enemiesCount == 0 && _enemiesLess == 0)
