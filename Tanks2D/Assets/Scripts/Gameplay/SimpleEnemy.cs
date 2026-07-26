@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Gameplay
@@ -22,7 +23,7 @@ namespace Gameplay
         [SerializeField] private float _reverseUntilAngle = 60f;
 
         [Header("Chasing")]
-        [SerializeField] private float _viewDistance = 8f;
+        [SerializeField] private float _playerViewDistance = 16f;
 
         private Transform _player;
         private TankMovement _movement;
@@ -107,7 +108,7 @@ namespace Gameplay
 
         private void FindPlayer()
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _viewDistance, _findMask);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _playerViewDistance, _findMask);
 
             if (hit.collider == null)
             {
@@ -137,11 +138,13 @@ namespace Gameplay
             {
                 float absAngle = Mathf.Abs(angle);
                 var hit = Physics2D.Raycast(transform.position, transform.up, _forwardCheckDistance, _obstacleMask);
-                if (_backward || (absAngle > _reverseUntilAngle && hit.distance <= _length))
+                if (!_backward && (absAngle > _reverseUntilAngle && hit.distance <= _length))
                 {
                     _backward = true;
-                    move = -0.4f;
                 }
+                
+                if(_backward)
+                    move = -0.4f;
             }
 
             _movement.Move(move, turn);
@@ -174,13 +177,7 @@ namespace Gameplay
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, transform.up * _forwardCheckDistance);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, 90) * transform.up * _sideCheckDistance);
-
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, -90) * transform.up * _sideCheckDistance);
+            Gizmos.DrawRay(transform.position, transform.up * _playerViewDistance);
         }
 #endif
     }

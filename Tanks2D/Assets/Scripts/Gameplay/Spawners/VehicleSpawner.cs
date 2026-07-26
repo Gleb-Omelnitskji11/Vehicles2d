@@ -18,7 +18,7 @@ namespace Gameplay
         private GameInstance _gameInstance;
 
         private const int MaxSpawnAttempts = 10;
-        private const float Radius = 2.0f;
+        private const float Radius = 4.0f;
         private const float SqrRadius = Radius * Radius;
 
         public void Init()
@@ -28,7 +28,7 @@ namespace Gameplay
             var configProvider = Services.Get<IConfigProvider>();
             _pooler = Services.Get<IObjectPooler>();
             _gameInstance = Services.Get<GameInstance>();
-            
+
             _vehicleConfig = configProvider.VehicleConfig;
             CreatePools();
         }
@@ -151,6 +151,9 @@ namespace Gameplay
 
         private bool IsFree(Vector2 potentialPoint)
         {
+            if (_vehicleRegister.Player && IsNear(_vehicleRegister.Player.transform.position, potentialPoint))
+                return false;
+            
             foreach (var tank in _vehicleRegister.ActiveTanks)
             {
                 if (IsNear(tank.transform.position, potentialPoint))

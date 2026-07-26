@@ -99,9 +99,9 @@ namespace Gameplay
 
         private void OnEnemyDie(Vehicle tank, bool byManual)
         {
-            if (byManual) return;
             tank.Died -= OnEnemyDie;
             _enemiesCount--;
+            if (byManual) return;
 
             if (_enemiesCount == 0 && _enemiesLess == 0)
             {
