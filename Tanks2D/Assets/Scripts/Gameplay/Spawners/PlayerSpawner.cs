@@ -27,7 +27,8 @@ namespace Gameplay.Spawners
                 ClearOldPlayer();
             }
 
-            Vehicle player = _vehicleSpawner.SpawnVehicle(VehicleType.Tank, true); //hardCode
+            VehicleType vehicleType = VehicleType.Tank; //hardCode
+            Vehicle player = _vehicleSpawner.SpawnVehicle(vehicleType, true);
             SimpleGun gun = player.gameObject.AddComponent<SimpleGun>(); //move to AttackFactory
             var playerInput = player.gameObject.AddComponent<PlayerInput>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
@@ -36,7 +37,7 @@ namespace Gameplay.Spawners
             player.tag = Constants.Player;
             player.gameObject.layer = LayerMask.NameToLayer(Constants.Player);
 
-            player.Init(new BasicUnitHealth(1), Team.Ally);
+            player.Init(new BasicUnitHealth(1), Team.Ally, vehicleType);
             VehicleRegister.RegisterPlayer(player);
             _gameInstance.Register(playerInput);
 

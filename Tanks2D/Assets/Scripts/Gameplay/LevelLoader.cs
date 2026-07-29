@@ -4,7 +4,8 @@ namespace Gameplay
     {
         public LevelData LoadLevel(int levelIndex)
         {
-            return new LevelData();
+            var level = new LevelData();
+            return level.GetCopy();
         }
     }
 }

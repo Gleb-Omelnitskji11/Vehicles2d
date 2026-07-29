@@ -1,4 +1,5 @@
 using Core.ObjectPool;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Gameplay;
 using Gameplay.Spawners;
@@ -38,14 +39,26 @@ namespace Core
             serviceLocator.Register<GameTimerService>(new GameTimerService());
             serviceLocator.Register<ProgressVisualizer>(_progressVisualizer);
             serviceLocator.Register<GameProgressor>(new GameProgressor());
+            serviceLocator.Register<GameDataSerialization>(new GameDataSerialization());
 
             StartGame();
         }
 
         private void StartGame()
         {
-            var gameProgress = Services.Get<GameProgressor>();
-            gameProgress.StartGame();
+            GameProgressor gameProgressor = Services.Get<GameProgressor>();
+            var saveSystem = Services.Get<ISaveSystem>();
+            saveSystem.OnEntryGameScene();
+            gameProgressor.StartGame();
+            // if (saveSystem.HasSaved())
+            // {
+            //     var data = saveSystem.GetSaveData();
+            //     gameProgressor.LoadGame(data);
+            // }
+            // else
+            // {
+            //     gameProgressor.StartGame();
+            // }
         }
     }
 }

@@ -1,3 +1,5 @@
+using Core;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Spawners;
@@ -14,7 +16,7 @@ namespace Gameplay.Attacking
         private ProjectileID _projectileID;
         private Team _team;
 
-        public void Init(float fireCooldown, ProjectileID projectileID, Team team)
+        public virtual void Init(float fireCooldown, ProjectileID projectileID, Team team)
         {
             _team = team;
             _projectileID = projectileID;
@@ -40,6 +42,20 @@ namespace Gameplay.Attacking
             projectile.transform.rotation = transform.rotation;
             projectile.gameObject.SetActive(true);
             projectile.Init(_team);
+        }
+
+        public virtual SimpleGunSaveData GetGunSaveData()
+        {
+            SimpleGunSaveData gunSaveData = new SimpleGunSaveData()
+            {
+                Cooldawn = _cooldown
+            };
+            return gunSaveData;
+        }
+
+        public void LoadData(SimpleGunSaveData data)
+        {
+            _cooldown = data.Cooldawn;
         }
     }
 }

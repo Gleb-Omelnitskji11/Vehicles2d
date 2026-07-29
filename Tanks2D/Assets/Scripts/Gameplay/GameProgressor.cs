@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using Core;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Cysharp.Threading.Tasks;
 using Enums;
+using Gameplay.Attacking;
 using Gameplay.Spawners;
 using Gameplay.Timer;
 using Gameplay.UpdatingInstance;
@@ -22,7 +25,7 @@ namespace Gameplay
 
         public GameStatus GameStatus { get; private set; }
         private int _enemiesCount;
-        private int _enemiesLess;
+        private List<EnemyType> _enemiesLess;
 
         private LevelData _levelData;
         private UniTask _awaitOperation;
@@ -52,16 +55,51 @@ namespace Gameplay
 
         public void StartGame()
         {
-            var player = _playerSpawner.SpawnPlayer();
-            player.Died += OnPlayerDie;
-
-            _levelData = _levelLoader.LoadLevel(0);
+            SpawnPlayer();
+            _levelData = _levelLoader.LoadLevel(1); //hardcode
             _enemiesCount = 0;
-            _enemiesLess = _levelData.EnemiesCount;
-            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess);
+            _enemiesLess = _levelData.Enemies.ToList();
+            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count);
             SpawnEnemies();
             
 
+            GameStatus = GameStatus.Running;
+        }
+
+        public void LoadGame(SaveData saveData)
+        {
+            //level
+            _levelData = _levelLoader.LoadLevel(saveData.LevelData.LevelIndex);
+            _enemiesLess = saveData.LevelData.EnemiesLess.ToList();
+
+            //enemies
+            _enemiesCount = 0;
+            foreach (var enemyData in saveData.Enemies)
+            {
+                var vehicle = GetNewVehicle(enemyData.EnemyType);
+                
+                vehicle.transform.position = new Vector2(enemyData.VehicleSaveData.Position.Item1, enemyData.VehicleSaveData.Position.Item2);
+                vehicle.transform.rotation = enemyData.VehicleSaveData.Rotation.ToQuaternion();
+                
+                if(vehicle.TryGetComponent<SimpleGun>(out SimpleGun simpleGun))
+                {
+                    simpleGun.LoadData(saveData.PlayerData.GunSaveData.Data);
+                }
+            }
+            foreach (var timer in saveData.LevelData.NextEnemySpawners)
+            {
+                CreateSpawnEnemyTimer(timer);
+            }
+
+            //player
+            var player = SpawnPlayer();
+            player.transform.position = new Vector2(saveData.PlayerData.Position.Item1, saveData.PlayerData.Position.Item2);
+            player.transform.rotation = saveData.PlayerData.Rotation.ToQuaternion();
+            var gun = player.GetComponent<SimpleGun>();
+            gun.LoadData(saveData.PlayerData.GunSaveData.Data);
+
+            
+            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count);
             GameStatus = GameStatus.Running;
         }
 
@@ -77,20 +115,43 @@ namespace Gameplay
             GameStatus = GameStatus.Running;
         }
 
+        public LevelSaveData GetLevelSaveData()
+        {
+            LevelSaveData levelSaveData = new LevelSaveData();
+            levelSaveData.EnemiesLess = _enemiesLess.ToArray();
+            levelSaveData.LevelIndex = _levelData.Index;
+            levelSaveData.NextEnemySpawners = new float[_timers.Count];
+            int j = 0;
+            for (int i = 0; i < _timers.Count; i++)
+            {
+                if(_timers[i].IsRunning)
+                {
+                    levelSaveData.NextEnemySpawners[j] = _timers[i].Time;
+                    j++;
+                }
+            }
+            return levelSaveData;
+        }
+
+        private Vehicle SpawnPlayer()
+        {
+            Vehicle player = _playerSpawner.SpawnPlayer();
+            player.Died += OnPlayerDie;
+            return player;
+        }
+
         private void SpawnEnemies()
         {
-            while (_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
+            while (_enemiesCount < _levelData.EnemiesMax && _enemiesLess.Count > 0)
             {
-                _enemiesLess--;
                 SpawnEnemy();
             }
         }
 
         private void SpawnNewEnemies()
         {
-            if (_enemiesCount < _levelData.EnemiesMax && _enemiesLess > 0)
+            if (_enemiesCount < _levelData.EnemiesMax && _enemiesLess.Count > 0)
             {
-                _enemiesLess--;
                 SpawnEnemy();
             }
 
@@ -101,32 +162,45 @@ namespace Gameplay
 
         private void SpawnEnemy()
         {
-            var enemy = _enemySpawner.SpawnEnemy(EnemyType.Simple);
+            EnemyType enemyType = _enemiesLess.Last();
+            _enemiesLess.RemoveAt(_enemiesLess.Count - 1);
+            var vehicle = GetNewVehicle(enemyType);
+        }
+
+        private Vehicle GetNewVehicle(EnemyType enemyType)
+        {
+            var enemy = _enemySpawner.SpawnEnemy(enemyType);
             enemy.Died += OnEnemyDie;
             _enemiesCount++;
+            return enemy;
         }
 
         private void OnEnemyDie(Vehicle tank, bool byManual)
         {
             tank.Died -= OnEnemyDie;
             _enemiesCount--;
-            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess);
+            _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count );
             if (byManual) return;
 
-            if (_enemiesCount == 0 && _enemiesLess == 0)
+            if (_enemiesCount == 0 && _enemiesLess.Count  == 0)
             {
                 GameStatus = GameStatus.Win;
                 _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
             }
             else
             {
-                var timer = _gameTimerService.AwaitGameOperation(1f, SpawnNewEnemies);
-                _timers.Add(timer);
-                _gameInstance.Register(timer);
+                CreateSpawnEnemyTimer(1f);
             }
         }
 
-        private void Clear()
+        private void CreateSpawnEnemyTimer(float time)
+        {
+            var timer = _gameTimerService.AwaitGameOperation(time, SpawnNewEnemies);
+            _timers.Add(timer);
+            _gameInstance.Register(timer);
+        }
+
+        public void Clear()
         {
             while (_tankRegistry.ActiveTanks.Count > 0)
             {

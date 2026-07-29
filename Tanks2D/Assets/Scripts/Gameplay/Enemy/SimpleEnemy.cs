@@ -1,4 +1,5 @@
 using Core;
+using Enums;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,6 +27,9 @@ namespace Gameplay.Enemy
 
         [Header("Chasing")]
         [SerializeField] private float _playerViewDistance = 16f;
+        
+        [Header("Data")]
+        [SerializeField] private EnemyType _enemyType = EnemyType.Simple;
 
         private Transform _player;
         private VehicleMovement _movement;
@@ -38,9 +42,12 @@ namespace Gameplay.Enemy
         private bool _chasingPlayer;
         private PlayerFinder _playerFinder;
 
+        private const float BackwardSpeed = 0.4f;
+        public virtual EnemyType EnemyType => _enemyType;
+
         private void Awake()
         {
-            _obstacleMask = LayerMask.GetMask(Constants.Wall, Constants.Player);
+            _obstacleMask = LayerMask.GetMask(Constants.Wall, Constants.Enemy);
             _findMask = LayerMask.GetMask(Constants.Player);
             _movement = GetComponent<VehicleMovement>();
             _playerFinder = new PlayerFinder(transform, _obstacleMask);
@@ -150,7 +157,7 @@ namespace Gameplay.Enemy
             }
 
             if (_backward)
-                move = -0.4f;
+                move = -BackwardSpeed;
             
             _movement.Move(move, -turn);
         }

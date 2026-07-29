@@ -32,17 +32,17 @@ namespace Gameplay.Spawners
         
         public Vehicle SpawnEnemy(EnemyType enemyType)
         {
-            var vehicleID = GetVehicleID(EnemyType.Simple); //hardcode
+            VehicleType vehicleID = GetVehicleID(EnemyType.Simple); //hardcode
             Vehicle enemy = _vehicleSpawner.SpawnVehicle(vehicleID, false);
 
             if (!enemy.Configured)
-                SetupEnemy(enemy, enemyType);
+                SetupEnemy(enemy, enemyType, vehicleID);
             
             enemy.gameObject.SetActive(true);
             return enemy;
         }
 
-        private void SetupEnemy(Vehicle enemy, EnemyType enemyType)
+        private void SetupEnemy(Vehicle enemy, EnemyType enemyType, VehicleType vehicleID)
         {
             Type enemyAi = GetAiComponent(enemyType);
             var ai =enemy.gameObject.AddComponent(enemyAi);
@@ -52,7 +52,7 @@ namespace Gameplay.Spawners
             enemy.tag = enemyStr;
             enemy.gameObject.layer = LayerMask.NameToLayer(enemyStr);
 
-            enemy.Init(new BasicUnitHealth(1), Team.Enemy);
+            enemy.Init(new BasicUnitHealth(1), Team.Enemy, vehicleID);
             if(ai is IUpdatable bot)
                 _gameInstance.Register(bot);
         }

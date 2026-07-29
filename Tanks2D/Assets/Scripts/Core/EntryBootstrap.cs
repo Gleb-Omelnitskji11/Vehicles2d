@@ -1,4 +1,5 @@
 using System;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -21,11 +22,15 @@ namespace Core
 
         private async UniTask Binding()
         {
+            await UniTask.DelayFrame(1);
             IServiceLocator serviceLocator = new ServiceLocator.ServiceLocator();
             serviceLocator.Register<IServiceLocator>(serviceLocator);
             
             ConfigProvider configProvider = new ConfigProvider();
             serviceLocator.Register<IConfigProvider>(configProvider);
+
+            ISaveSystem saveSystem = new PlayerPrefsService();
+            serviceLocator.Register<ISaveSystem>(saveSystem);
 
             await configProvider.LoadConfigAsync();
         }

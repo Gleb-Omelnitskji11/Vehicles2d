@@ -1,4 +1,5 @@
 using System;
+using Core;
 using Enums;
 using Gameplay.Attacking;
 using UnityEngine;
@@ -11,18 +12,20 @@ namespace Gameplay
         [SerializeField] private SpriteRenderer _teamHighlight;
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private TrailRenderer _trail;
+        public VehicleType VehicleType { get; private set; }
         public  bool Configured { get; private set; }
         public Team Team { get; private set; }
 
         public BasicUnitHealth BasicUnitHealth { get; private set; }
 
-        public void Init(BasicUnitHealth basicUnitHealth, Team team)
+        public void Init(BasicUnitHealth basicUnitHealth, Team team, VehicleType vehicleType)
         {
             if (Configured) return;
             BasicUnitHealth = basicUnitHealth;
             BasicUnitHealth.OnTakeDamage += OnTakeDamage;
             BasicUnitHealth.OnDeath += OnDie;
             SetTeam(team);
+            VehicleType = vehicleType;
             Configured = true;
         }
 
@@ -65,7 +68,7 @@ namespace Gameplay
             if (!Configured) return;
             string tag = collision.gameObject.tag;
 
-            if (tag.Equals("Projectile"))
+            if (tag.Equals(Constants.Projectile))
             {
                 if (collision.gameObject.TryGetComponent<BasicProjectile>(out var projectile))
                 {

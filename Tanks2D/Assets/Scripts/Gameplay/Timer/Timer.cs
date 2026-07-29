@@ -6,23 +6,23 @@ namespace Gameplay.Timer
 {
     public class Timer : IUpdatable
     {
-        private float _time;
+        public float Time {get; private set;}
         private Action _action;
         public bool IsRunning { get; private set; }
 
         public void SetupTimer(float time, Action action)
         {
             _action = action;
-            _time = time;
+            Time = time;
             IsRunning = true;
         }
 
         public void OnUpdate()
         {
             if (!IsRunning) return;
-            _time -= Time.deltaTime;
+            Time -= UnityEngine.Time.deltaTime;
 
-            if (_time <= 0)
+            if (Time <= 0)
             {
                 _action?.Invoke();
                 _action = null;

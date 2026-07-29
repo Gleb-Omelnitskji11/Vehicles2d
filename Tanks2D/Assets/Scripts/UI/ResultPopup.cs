@@ -1,3 +1,4 @@
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay;
@@ -12,12 +13,19 @@ namespace UI
         [SerializeField] private TMP_Text _winText;
         [SerializeField] private TMP_Text _loseText;
         [SerializeField] private Button _repeatButton;
+        [SerializeField] private Button _loadButton;
+        [SerializeField] private Button _exitButton;
+        
         private GameProgressor _gameProgressor;
+        private ISaveSystem _saveSystem;
 
         private void Start()
         {
             _gameProgressor = Services.Get<GameProgressor>();
+            _saveSystem = Services.Get<ISaveSystem>();
             _repeatButton.onClick.AddListener(RepeatGame);
+            _loadButton.onClick.AddListener(Load);
+            _exitButton.onClick.AddListener(Quit);
         }
 
         public override void Open()
@@ -31,12 +39,31 @@ namespace UI
             bool isWin = _gameProgressor.GameStatus == GameStatus.Win;
             _winText.enabled = isWin;
             _loseText.enabled = !isWin;
+            UpdateLoadButton();
+        }
+
+        private void UpdateLoadButton()
+        {
+            _loadButton.interactable = _saveSystem.HasSaved();
+        }
+
+        private void Load()
+        {
+            Close();
+            _gameProgressor.Clear();
+            var data = _saveSystem.GetSaveData();
+            _gameProgressor.LoadGame(data);
         }
 
         private void RepeatGame()
         {
             Close();
             _gameProgressor.RepeatGame();
+        }
+
+        private void Quit()
+        {
+            Application.Quit();
         }
     }
 }

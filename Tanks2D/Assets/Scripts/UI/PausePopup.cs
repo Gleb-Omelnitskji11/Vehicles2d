@@ -1,4 +1,5 @@
 using Core;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay;
@@ -17,6 +18,7 @@ namespace UI
         [SerializeField] private Button _quitButton;
         private GameProgressor _gameProgressor;
         private GamePopupsProvider _gamePopupsProvider;
+        private ISaveSystem _saveSystem;
 
         private void Awake()
         {
@@ -31,6 +33,9 @@ namespace UI
         {
             _gameProgressor = Services.Get<GameProgressor>();
             _gamePopupsProvider = Services.Get<GamePopupsProvider>();
+            _saveSystem = Services.Get<ISaveSystem>();
+
+            UpdateLoadButton();
         }
 
         public void Update()
@@ -72,12 +77,21 @@ namespace UI
 
         private void Save()
         {
-            Close();
+            _saveSystem.Save();
+            UpdateLoadButton();
+        }
+
+        private void UpdateLoadButton()
+        {
+            _loadButton.interactable = _saveSystem.HasSaved();
         }
 
         private void Load()
         {
             Close();
+            _gameProgressor.Clear();
+            var data = _saveSystem.GetSaveData();
+            _gameProgressor.LoadGame(data);
         }
 
 
