@@ -29,7 +29,7 @@ namespace Gameplay.Spawners
 
             VehicleType vehicleType = VehicleType.Tank; //hardCode
             Vehicle player = _vehicleSpawner.SpawnVehicle(vehicleType, true);
-            SimpleGun gun = player.gameObject.AddComponent<SimpleGun>(); //move to AttackFactory
+            BaseGun gun = player.gameObject.AddComponent<BaseGun>(); //move to AttackFactory
             var playerInput = player.gameObject.AddComponent<PlayerInput>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
 

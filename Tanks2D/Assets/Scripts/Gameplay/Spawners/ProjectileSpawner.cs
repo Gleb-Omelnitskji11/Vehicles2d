@@ -2,6 +2,7 @@ using System;
 using Config;
 using Core;
 using Core.ObjectPool;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Attacking;
@@ -39,6 +40,18 @@ namespace Gameplay.Spawners
         {
             string key = GetKey(projectileID);
             BasicProjectile projectile = _pooler.Get<BasicProjectile>(key);
+            return projectile;
+        }
+        
+        public BasicProjectile SpawnProjectile(ProjectileSaveData projectileData)
+        {
+            string key = GetKey(projectileData.ProjectileID);
+            BasicProjectile projectile = _pooler.Get<BasicProjectile>(key);
+            projectile.transform.position = new Vector2(projectileData.Position.Item1, projectileData.Position.Item2);
+            projectile.transform.rotation = projectileData.Rotation.ToQuaternion();
+            
+            projectile.gameObject.SetActive(true);
+            projectile.Init(projectileData.Team, projectileData.ProjectileID);
             return projectile;
         }
         

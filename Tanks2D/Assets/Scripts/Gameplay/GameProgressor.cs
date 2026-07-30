@@ -33,6 +33,7 @@ namespace Gameplay
         private readonly List<Timer.Timer> _timers = new List<Timer.Timer>();
         private GameInstance _gameInstance;
         private ProgressVisualizer _progressVisualizer;
+        private IProjectileSpawner _projectileSpawner;
 
         public void Init()
         {
@@ -45,6 +46,7 @@ namespace Gameplay
             _gameTimerService = Services.Get<GameTimerService>();
             _gameInstance = Services.Get<GameInstance>();
             _progressVisualizer = Services.Get<ProgressVisualizer>();
+            _projectileSpawner = Services.Get<IProjectileSpawner>();
         }
 
         public void RepeatGame()
@@ -72,33 +74,33 @@ namespace Gameplay
             _levelData = _levelLoader.LoadLevel(saveData.LevelData.LevelIndex);
             _enemiesLess = saveData.LevelData.EnemiesLess.ToList();
 
+            //player
+            var player = SpawnPlayer();
+            var playerData = saveData.PlayerData.VehicleSaveData;
+            LoadVehicle(playerData, player);
+
             //enemies
             _enemiesCount = 0;
             foreach (var enemyData in saveData.Enemies)
             {
                 var vehicle = GetNewVehicle(enemyData.EnemyType);
-                
-                vehicle.transform.position = new Vector2(enemyData.VehicleSaveData.Position.Item1, enemyData.VehicleSaveData.Position.Item2);
-                vehicle.transform.rotation = enemyData.VehicleSaveData.Rotation.ToQuaternion();
-                
-                if(vehicle.TryGetComponent<SimpleGun>(out SimpleGun simpleGun))
-                {
-                    simpleGun.LoadData(saveData.PlayerData.GunSaveData.Data);
-                }
+
+                LoadVehicle(enemyData.VehicleSaveData, vehicle);
             }
+
+            //timers
             foreach (var timer in saveData.LevelData.NextEnemySpawners)
             {
                 CreateSpawnEnemyTimer(timer);
             }
-
-            //player
-            var player = SpawnPlayer();
-            player.transform.position = new Vector2(saveData.PlayerData.Position.Item1, saveData.PlayerData.Position.Item2);
-            player.transform.rotation = saveData.PlayerData.Rotation.ToQuaternion();
-            var gun = player.GetComponent<SimpleGun>();
-            gun.LoadData(saveData.PlayerData.GunSaveData.Data);
-
             
+            //projectile
+            foreach (var projectileData in saveData.ProjectilesData)
+            {
+                _projectileSpawner.SpawnProjectile(projectileData);
+            }
+
+
             _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count);
             GameStatus = GameStatus.Running;
         }
@@ -138,6 +140,17 @@ namespace Gameplay
             Vehicle player = _playerSpawner.SpawnPlayer();
             player.Died += OnPlayerDie;
             return player;
+        }
+
+        private void LoadVehicle(VehicleSaveData vehicleData, Vehicle vehicle)
+        {
+            vehicle.transform.position = new Vector2(vehicleData.Position.Item1, vehicleData.Position.Item2);
+            vehicle.transform.rotation = vehicleData.Rotation.ToQuaternion();
+
+            if (vehicle.TryGetComponent<BaseGun>(out BaseGun enemyGun) && vehicleData.GunSaveData != null)
+            {
+                enemyGun.LoadData(vehicleData.GunSaveData.Data);
+            }
         }
 
         private void SpawnEnemies()

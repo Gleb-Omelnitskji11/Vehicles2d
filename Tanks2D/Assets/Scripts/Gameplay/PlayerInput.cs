@@ -8,12 +8,12 @@ namespace Gameplay
     public class PlayerInput : MonoBehaviour, IUpdatable
     {
         private VehicleMovement _movement;
-        private SimpleGun _weapon;
+        private BaseGun _weapon;
 
         private void Awake()
         {
             _movement = GetComponent<VehicleMovement>();
-            _weapon = GetComponent<SimpleGun>();
+            _weapon = GetComponent<BaseGun>();
         }
 
         public void OnUpdate()

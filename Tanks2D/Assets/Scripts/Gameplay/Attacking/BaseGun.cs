@@ -1,4 +1,3 @@
-using Core;
 using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay.Attacking
 {
-    public class SimpleGun : MonoBehaviour
+    public class BaseGun : MonoBehaviour
     {
         private float _fireCooldown = 0.2f;
 
@@ -41,7 +40,7 @@ namespace Gameplay.Attacking
             projectile.transform.position = transform.position;
             projectile.transform.rotation = transform.rotation;
             projectile.gameObject.SetActive(true);
-            projectile.Init(_team);
+            projectile.Init(_team, _projectileID);
         }
 
         public virtual SimpleGunSaveData GetGunSaveData()

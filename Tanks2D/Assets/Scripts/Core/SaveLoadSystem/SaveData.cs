@@ -9,8 +9,9 @@ namespace Core.SaveLoadSystem
     {
         public LevelSaveData LevelData;
         
-        public VehicleSaveData PlayerData;
+        public PlayerSaveData PlayerData;
         public EnemySaveData[] Enemies;
+        public ProjectileSaveData[] ProjectilesData;
     }
     
     [Serializable]
@@ -19,6 +20,12 @@ namespace Core.SaveLoadSystem
         public EnemyType[] EnemiesLess;
         public int LevelIndex;
         public float[] NextEnemySpawners;
+    }
+    
+    [Serializable]
+    public class PlayerSaveData
+    {
+        public VehicleSaveData VehicleSaveData;
     }
     
     [Serializable]
@@ -47,6 +54,16 @@ namespace Core.SaveLoadSystem
     public class SimpleGunSaveData
     {
         public float Cooldawn;
+    }
+
+    [Serializable]
+    public class ProjectileSaveData
+    {
+        public (float, float) Position;
+        public SerializableQuaternion Rotation;
+        public Team Team;
+        public ProjectileID ProjectileID;
+        public float Lifetime;
     }
     
     [Serializable]
