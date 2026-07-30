@@ -95,11 +95,6 @@ Currently the game state can be saved only from:
 - Pause Window
 - Result Window
 
-Current project limitations:
-
-- Existing projectiles are not saved.
-- Existing projectiles are not restored after loading.
-
 ---
 
 ### UI
@@ -118,9 +113,9 @@ Only the currently active Canvas is enabled, reducing unnecessary UI updates.
 
 ## Known Limitations
 
-- Menus can only be opened using **Esc**.
-- Existing projectiles are not included in save files.
+- Pause can only be opened using **Esc**.
 - Rarely an enemy after collision with another enemy can go backwards for 1 sec and ignore player finding
+- Save system works only with last saving.
 
 ---
 
