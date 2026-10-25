@@ -6,9 +6,9 @@ namespace Gameplay.Timer
 {
     public class GameTimerService : IService
     {
-        private readonly List<Gameplay.Timer.Timer> _timers = new List<Gameplay.Timer.Timer>();
+        private readonly List<Timer> _timers = new List<Timer>();
 
-        public Gameplay.Timer.Timer AwaitGameOperation(float time, Action action)
+        public Timer AwaitGameOperation(float time, Action action)
         {
             foreach (var timer in _timers)
             {
@@ -19,14 +19,14 @@ namespace Gameplay.Timer
                 }
             }
 
-            Gameplay.Timer.Timer curTimer = CreateNewTimer();
+            Timer curTimer = CreateNewTimer();
             curTimer.SetupTimer(time, action);
             return curTimer;
         }
 
-        private Gameplay.Timer.Timer CreateNewTimer()
+        private Timer CreateNewTimer()
         {
-            var timer = new Gameplay.Timer.Timer();
+            var timer = new Timer();
             _timers.Add(timer);
             return timer;
         }

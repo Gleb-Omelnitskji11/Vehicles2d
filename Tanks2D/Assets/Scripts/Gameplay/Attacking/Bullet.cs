@@ -1,15 +1,15 @@
-using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay.Attacking
 {
-    public class Bullet : BasicProjectile, IUpdatable
+    public class Bullet : BasicProjectile
     {
         [SerializeField] private float _speed = 10f;
         [SerializeField] protected int _damage = 1;
 
-        public void OnUpdate()
+        public override void OnUpdate()
         {
+            base.OnUpdate();
             transform.position += (Vector3)(StartDirection * _speed * Time.deltaTime);
         }
         
@@ -21,10 +21,10 @@ namespace Gameplay.Attacking
             }
         }
 
-        public override void Apply(Vehicle tank)
+        public override void ApplyHit(Vehicle tank)
         {
             tank.BasicUnitHealth.TakeDamage(_damage);
-            base.Apply(tank);
+            base.ApplyHit(tank);
         }
     }
 }

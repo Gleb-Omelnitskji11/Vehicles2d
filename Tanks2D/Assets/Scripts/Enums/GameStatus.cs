@@ -4,8 +4,13 @@ namespace Enums
     {
         NotStarted,
         Running,
-        Win,
-        Lose,
         Pause
+    }
+
+    public enum MatchResult
+    {
+        Unfinished,
+        Lose,
+        Win
     }
 }

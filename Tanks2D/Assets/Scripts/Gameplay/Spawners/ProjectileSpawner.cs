@@ -20,6 +20,8 @@ namespace Gameplay.Spawners
         private IObjectPooler _pooler;
         private GameInstance _gameInstance;
 
+        private int id;
+
         public void Init()
         {
             var configProvider = Services.Get<IConfigProvider>();
@@ -43,7 +45,7 @@ namespace Gameplay.Spawners
             return projectile;
         }
         
-        public BasicProjectile SpawnProjectile(ProjectileSaveData projectileData)
+        public BasicProjectile SpawnProjectileFromData(ProjectileSaveData projectileData)
         {
             string key = GetKey(projectileData.ProjectileID);
             BasicProjectile projectile = _pooler.Get<BasicProjectile>(key);
@@ -93,10 +95,11 @@ namespace Gameplay.Spawners
             ProjectileID projectileID = ProjectileID.Bullet;
             BasicProjectile prefab = _projectileConfig.GetProjectilePrefab(projectileID);
             var projectile = SpawnNew(prefab);
+            projectile.name = projectileID.ToString();
             SetPoolObject(projectile, projectileID);
             
             if(projectile is IUpdatable updatable)
-                _gameInstance.Register(updatable);
+                _gameInstance.TryAddNewUpdatable(updatable);
             return projectile;
         }
 

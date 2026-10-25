@@ -18,7 +18,7 @@ namespace UI
 
         public virtual void Open()
         {
-            if (_anim.IsActive())
+            if (_anim?.IsActive() ?? false)
                 return;
             Canvas.enabled = true;
             CanvasGroup.interactable = true;
@@ -30,7 +30,7 @@ namespace UI
 
         public virtual void Close()
         {
-            if (_anim.IsActive())
+            if (_anim?.IsActive() ?? false)
                 return;
 
             _anim = CanvasGroup.DOFade(0f, _closeTime);

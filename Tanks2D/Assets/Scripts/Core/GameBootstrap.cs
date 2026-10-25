@@ -49,16 +49,15 @@ namespace Core
             GameProgressor gameProgressor = Services.Get<GameProgressor>();
             var saveSystem = Services.Get<ISaveSystem>();
             saveSystem.OnEntryGameScene();
-            gameProgressor.StartGame();
-            // if (saveSystem.HasSaved())
-            // {
-            //     var data = saveSystem.GetSaveData();
-            //     gameProgressor.LoadGame(data);
-            // }
-            // else
-            // {
-            //     gameProgressor.StartGame();
-            // }
+            if (saveSystem.HasSaved())
+            {
+                var data = saveSystem.GetSaveData();
+                gameProgressor.LoadGame(data);
+            }
+            else
+            {
+                gameProgressor.StartGame();
+            }
         }
     }
 }

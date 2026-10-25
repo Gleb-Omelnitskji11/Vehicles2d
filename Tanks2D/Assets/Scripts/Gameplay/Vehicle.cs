@@ -73,7 +73,7 @@ namespace Gameplay
                 if (collision.gameObject.TryGetComponent<BasicProjectile>(out var projectile))
                 {
                     if (projectile.Team != Team)
-                        projectile.Apply(this);
+                        projectile.ApplyHit(this);
                 }
             }
         }

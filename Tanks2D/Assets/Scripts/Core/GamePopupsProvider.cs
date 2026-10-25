@@ -43,17 +43,17 @@ namespace Core
 
         private void BlockCursor()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
         }
 
-        public void TryOpen(PopupID popupID, bool force = false)
+        public bool TryOpen(PopupID popupID, bool force = false)
         {
             var popup = _popups.FirstOrDefault(x=>x.id == popupID);
             if(popup == null)
             {
                 Debug.LogError($"Could not find data for {popupID}");
-                return;
+                return false;
             }
             
             if (_currentPopup != null)
@@ -65,11 +65,12 @@ namespace Core
                 else
                 {
                     Debug.LogWarning($"Close {_currentPopup.gameObject} to open {popupID}");
-                    return;
+                    return false;
                 }
             }
             
             popup.popup.Open();
+            return true;
         }
 
         [Serializable]

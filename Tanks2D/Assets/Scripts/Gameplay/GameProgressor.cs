@@ -24,6 +24,7 @@ namespace Gameplay
         private ProjectileRegister _projectileRegister;
 
         public GameStatus GameStatus { get; private set; }
+        public MatchResult MatchResult { get; private set; }
         private int _enemiesCount;
         private List<EnemyType> _enemiesLess;
 
@@ -58,14 +59,19 @@ namespace Gameplay
         public void StartGame()
         {
             SpawnPlayer();
+            UpdateInfo();
+            SpawnEnemies();
+  
+            GameStatus = GameStatus.Running;
+            MatchResult = MatchResult.Unfinished;
+        }
+
+        private void UpdateInfo()
+        {
             _levelData = _levelLoader.LoadLevel(1); //hardcode
             _enemiesCount = 0;
             _enemiesLess = _levelData.Enemies.ToList();
             _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count);
-            SpawnEnemies();
-            
-
-            GameStatus = GameStatus.Running;
         }
 
         public void LoadGame(SaveData saveData)
@@ -97,12 +103,12 @@ namespace Gameplay
             //projectile
             foreach (var projectileData in saveData.ProjectilesData)
             {
-                _projectileSpawner.SpawnProjectile(projectileData);
+                _projectileSpawner.SpawnProjectileFromData(projectileData);
             }
-
-
+            
             _progressVisualizer.UpdateInfo(_enemiesCount + _enemiesLess.Count);
             GameStatus = GameStatus.Running;
+            MatchResult = MatchResult.Unfinished;
         }
 
         public void Pause()
@@ -170,7 +176,7 @@ namespace Gameplay
 
             var timer = _timers[0];
             _timers.RemoveAt(0);
-            _gameInstance.Unregister(timer);
+            _gameInstance.AddToUnsubUpdate(timer);
         }
 
         private void SpawnEnemy()
@@ -197,7 +203,8 @@ namespace Gameplay
 
             if (_enemiesCount == 0 && _enemiesLess.Count  == 0)
             {
-                GameStatus = GameStatus.Win;
+                GameStatus = GameStatus.NotStarted;
+                MatchResult = MatchResult.Win;
                 _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
             }
             else
@@ -210,7 +217,7 @@ namespace Gameplay
         {
             var timer = _gameTimerService.AwaitGameOperation(time, SpawnNewEnemies);
             _timers.Add(timer);
-            _gameInstance.Register(timer);
+            _gameInstance.TryAddNewUpdatable(timer);
         }
 
         public void Clear()
@@ -239,7 +246,9 @@ namespace Gameplay
         private void OnPlayerDie(Vehicle tank, bool byManual)
         {
             if (byManual) return;
-            GameStatus = GameStatus.Lose;
+            GameStatus = GameStatus.NotStarted;
+            
+            MatchResult = MatchResult.Lose;
             _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
         }
     }

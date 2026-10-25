@@ -36,7 +36,7 @@ namespace UI
 
         private void Setup()
         {
-            bool isWin = _gameProgressor.GameStatus == GameStatus.Win;
+            bool isWin = _gameProgressor.MatchResult == MatchResult.Win;
             _winText.enabled = isWin;
             _loseText.enabled = !isWin;
             UpdateLoadButton();

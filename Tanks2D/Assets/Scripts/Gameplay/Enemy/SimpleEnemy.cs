@@ -44,6 +44,7 @@ namespace Gameplay.Enemy
 
         private const float BackwardSpeed = 0.4f;
         public virtual EnemyType EnemyType => _enemyType;
+        public bool IgnorePause { get; } = false;
 
         private void Awake()
         {
@@ -73,6 +74,7 @@ namespace Gameplay.Enemy
             Vehicle tank = GetComponent<Vehicle>();
             tank.OnCollision += OnCollision;
         }
+
 
         public void OnUpdate()
         {

@@ -14,15 +14,17 @@ namespace Gameplay
         private float _turnInput;
         private GameInstance _gameInstance;
 
+        public bool IgnorePause { get; } = false;
+
         private void Start()
         {
             _gameInstance = Services.Get<GameInstance>();
-            _gameInstance.Register(this);
+            _gameInstance.TryAddNewUpdatable(this);
         }
 
         private void OnDestroy()
         {
-            _gameInstance.Unregister(this);
+            _gameInstance.AddToUnsubUpdate(this);
         }
 
         public override void Move(float move, float turn)

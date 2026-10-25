@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using Core.ServiceLocator;
 using Enums;
-using Gameplay.Timer;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 
@@ -17,6 +15,8 @@ namespace Gameplay.Attacking
         public float CurrentLifeTime { get; private set; }
         public Team Team { get; private set; }
 
+        public bool IgnorePause { get; } = false;
+
         private void Awake()
         {
             _gameInstance = Services.Get<GameInstance>();
@@ -24,12 +24,12 @@ namespace Gameplay.Attacking
 
         private void OnEnable()
         {
-            _gameInstance.Register(this);
+            _gameInstance.TryAddNewUpdatable(this);
         }
 
         private void OnDisable()
         {
-            _gameInstance.Unregister(this);
+            _gameInstance.AddToUnsubUpdate(this);
         }
 
         public virtual void Init(Team team, ProjectileID projectileID)
@@ -40,12 +40,12 @@ namespace Gameplay.Attacking
             StartDirection = transform.up;
         }
 
-        public virtual void Apply(Vehicle tank)
+        public virtual void ApplyHit(Vehicle tank)
         {
             Despawn();
         }
 
-        public void OnUpdate()
+        public virtual void OnUpdate()
         {
             CurrentLifeTime -= Time.deltaTime;
             if (CurrentLifeTime <= 0)
@@ -54,14 +54,14 @@ namespace Gameplay.Attacking
 
         public virtual void Despawn()
         {
-            _gameInstance.Unregister(this);
+            _gameInstance.AddToUnsubUpdate(this);
             gameObject.SetActive(false);
             Deactivated?.Invoke(this, true);
         }
 
         private void OnDestroy()
         {
-            _gameInstance.Unregister(this);
+            _gameInstance.AddToUnsubUpdate(this);
             Deactivated = null;
         }
 

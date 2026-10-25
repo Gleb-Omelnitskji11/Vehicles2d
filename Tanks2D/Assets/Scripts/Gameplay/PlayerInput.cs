@@ -16,6 +16,8 @@ namespace Gameplay
             _weapon = GetComponent<BaseGun>();
         }
 
+        public bool IgnorePause { get; } = false;
+
         public void OnUpdate()
         {
             float move = Input.GetAxisRaw("Vertical");

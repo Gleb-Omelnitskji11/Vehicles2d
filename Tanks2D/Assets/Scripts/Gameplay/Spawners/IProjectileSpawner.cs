@@ -8,6 +8,6 @@ namespace Gameplay.Spawners
     public interface IProjectileSpawner : IService, IInit
     {
         BasicProjectile SpawnProjectile(ProjectileID projectileID);
-        BasicProjectile SpawnProjectile(ProjectileSaveData projectileID);
+        BasicProjectile SpawnProjectileFromData(ProjectileSaveData projectileID);
     }
 }

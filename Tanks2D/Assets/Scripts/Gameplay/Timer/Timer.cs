@@ -9,6 +9,7 @@ namespace Gameplay.Timer
         public float Time {get; private set;}
         private Action _action;
         public bool IsRunning { get; private set; }
+        public bool IgnorePause { get; } = false;
 
         public void SetupTimer(float time, Action action)
         {

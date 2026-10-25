@@ -54,7 +54,7 @@ namespace Gameplay.Spawners
 
             enemy.Init(new BasicUnitHealth(1), Team.Enemy, vehicleID);
             if(ai is IUpdatable bot)
-                _gameInstance.Register(bot);
+                _gameInstance.TryAddNewUpdatable(bot);
         }
         
         private VehicleType GetVehicleID(EnemyType enemyType)

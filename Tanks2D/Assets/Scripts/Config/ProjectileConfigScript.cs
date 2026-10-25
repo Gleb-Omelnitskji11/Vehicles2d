@@ -1,6 +1,5 @@
 using System;
 using Enums;
-using Gameplay;
 using Gameplay.Attacking;
 using UnityEngine;
 

@@ -39,7 +39,7 @@ namespace Gameplay.Spawners
 
             player.Init(new BasicUnitHealth(1), Team.Ally, vehicleType);
             VehicleRegister.RegisterPlayer(player);
-            _gameInstance.Register(playerInput);
+            _gameInstance.TryAddNewUpdatable(playerInput);
 
             return player;
         }
@@ -48,7 +48,7 @@ namespace Gameplay.Spawners
         {
             var input = VehicleRegister.Player.GetComponent<PlayerInput>();
             Object.Destroy(VehicleRegister.Player.gameObject);
-            _gameInstance.Unregister(input);
+            _gameInstance.AddToUnsubUpdate(input);
             VehicleRegister.UnRegisterPlayer();
         }
     }

@@ -41,12 +41,12 @@ namespace UI
         public void Update()
         {
             var  status = _gameProgressor.GameStatus;
-            if (status == GameStatus.Lose || status == GameStatus.Win)
+            if (status == GameStatus.NotStarted)
                 return;
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if(IsOpen)
-                    Close();
+                    Resume();
                 else
                     _gamePopupsProvider.TryOpen(PopupID.PausePopup);
             }

@@ -7,9 +7,11 @@ namespace Gameplay.UpdatingInstance
 {
     public class GameInstance : MonoBehaviour, IService
     {
-        private readonly List<IUpdatable> _updatables = new();
-        private readonly List<IUpdatable> _updatablesPauseIgnoring = new();
-        private readonly List<IFixedUpdatable> _fixedUpdatables = new();
+        public readonly List<IUpdatable> _updatables = new();
+        public readonly List<IUpdatable> _updatablesPauseIgnoring = new();
+        
+        public readonly List<IUpdatable> _newSubForRegister = new();
+        public readonly List<IUpdatable> _newSubForUnregister = new();
         private GameProgressor _gameProgressor;
 
         public void Start()
@@ -19,57 +21,71 @@ namespace Gameplay.UpdatingInstance
 
         private void Update()
         {
+            UnsubOldUpdatable();
+            RegisterNew();
             for (int i = 0; i < _updatablesPauseIgnoring.Count; i++)
                 _updatablesPauseIgnoring[i].OnUpdate();
 
-            if (_gameProgressor.GameStatus != GameStatus.Running) return;
+            if (_gameProgressor.GameStatus != GameStatus.Running) 
+                return;
+            
             for (int i = 0; i < _updatables.Count; i++)
                 _updatables[i].OnUpdate();
         }
-
-        private void FixedUpdate()
+        
+        public bool TryAddNewUpdatable(IUpdatable updatable)
         {
-            if (_gameProgressor.GameStatus != GameStatus.Running) return;
-            for (int i = 0; i < _fixedUpdatables.Count; i++)
-                _fixedUpdatables[i].OnFixedUpdate();
-        }
-
-        public void Register(IUpdatable updatable, bool ignorePause = false)
-        {
-            if (ignorePause)
+            if (!_newSubForRegister.Contains(updatable))
             {
-                if (!_updatablesPauseIgnoring.Contains(updatable))
-                    _updatablesPauseIgnoring.Add(updatable);
-                return;
+                _newSubForRegister.Add(updatable);
+                return true;
             }
-
-            if (!_updatables.Contains(updatable))
-                _updatables.Add(updatable);
+            return false;
         }
 
-        public void Unregister(IUpdatable updatable, bool ignorePause = false)
+        public void AddToUnsubUpdate(IUpdatable updatable)
         {
-            if (ignorePause)
+            if (!_newSubForUnregister.Contains(updatable))
             {
-                if (_updatablesPauseIgnoring.Contains(updatable))
-                    _updatablesPauseIgnoring.Remove(updatable);
-                return;
+                _newSubForUnregister.Add(updatable);
             }
-
-            if (_updatables.Contains(updatable))
-                _updatables.Remove(updatable);
         }
-
-        public void Register(IFixedUpdatable fixedupdatable)
+        
+        private void RegisterNew()
         {
-            if (!_fixedUpdatables.Contains(fixedupdatable))
-                _fixedUpdatables.Add(fixedupdatable);
+            foreach (var updatable in _newSubForRegister)
+            {
+                if (updatable.IgnorePause)
+                {
+                    if (!_updatablesPauseIgnoring.Contains(updatable))
+                        _updatablesPauseIgnoring.Add(updatable);
+                    continue;
+                }
+
+                if (!_updatables.Contains(updatable))
+                    _updatables.Add(updatable);
+            }
+            
+            _newSubForRegister.Clear();
         }
-
-        public void Unregister(IFixedUpdatable fixedupdatable)
+        
+        
+        private void UnsubOldUpdatable()
         {
-            if (_fixedUpdatables.Contains(fixedupdatable))
-                _fixedUpdatables.Remove(fixedupdatable);
+            foreach (var updatable in _newSubForUnregister)
+            {
+                if (updatable.IgnorePause)
+                {
+                    if (_updatablesPauseIgnoring.Contains(updatable))
+                        _updatablesPauseIgnoring.Remove(updatable);
+                    continue;
+                }
+
+                if (_updatables.Contains(updatable))
+                    _updatables.Remove(updatable);
+            }
+            
+            _newSubForUnregister.Clear();
         }
     }
 }
