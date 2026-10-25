@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Gameplay.Attacking
@@ -6,6 +7,8 @@ namespace Gameplay.Attacking
     {
         [SerializeField] private float _speed = 10f;
         [SerializeField] protected int _damage = 1;
+
+        public event Action<Vector2, Enums.ProjectileID> OnHit;
 
         public override void OnUpdate()
         {
@@ -17,12 +20,18 @@ namespace Gameplay.Attacking
         {
             if (collision.gameObject.tag.Equals("Wall"))
             {
+                OnHit?.Invoke(collision.ClosestPoint(transform.position), ProjectileID);
                 Despawn();
             }
         }
 
         public override void ApplyHit(Vehicle tank)
         {
+            Collider2D tankCollider = tank.GetComponent<Collider2D>();
+            Vector2 hitPoint = tankCollider != null
+                ? tankCollider.ClosestPoint(transform.position)
+                : transform.position;
+            OnHit?.Invoke(hitPoint, ProjectileID);
             tank.BasicUnitHealth.TakeDamage(_damage);
             base.ApplyHit(tank);
         }

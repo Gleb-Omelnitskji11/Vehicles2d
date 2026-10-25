@@ -19,6 +19,7 @@ namespace Gameplay.Spawners
         private ProjectileRegister _projectileRegister;
         private IObjectPooler _pooler;
         private GameInstance _gameInstance;
+        private EffectSpawner _effectSpawner;
 
         private int id;
 
@@ -28,6 +29,7 @@ namespace Gameplay.Spawners
             _projectileRegister = Services.Get<ProjectileRegister>();
             _pooler = Services.Get<IObjectPooler>();
             _gameInstance = Services.Get<GameInstance>();
+            _effectSpawner = Services.Get<EffectSpawner>();
             
             _projectileConfig = configProvider.ProjectileConfig;
             _projectileParent = new GameObject
@@ -97,6 +99,9 @@ namespace Gameplay.Spawners
             var projectile = SpawnNew(prefab);
             projectile.name = projectileID.ToString();
             SetPoolObject(projectile, projectileID);
+
+            if (projectile is Bullet bullet)
+                bullet.OnHit += _effectSpawner.SpawnBulletHitEffect;
             
             if(projectile is IUpdatable updatable)
                 _gameInstance.TryAddNewUpdatable(updatable);

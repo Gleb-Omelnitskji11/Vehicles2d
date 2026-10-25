@@ -15,3 +15,6 @@ MonoBehaviour:
   _projectileData:
   - ProjectileID: 0
     Prefab: {fileID: -8769636693951662890, guid: b3a6a7ac19036b24ab89e64531a2d276, type: 3}
+  _hitEffectData:
+  - ProjectileID: 0
+    Prefab: {fileID: 5251561993705862867, guid: b24b1f04b916c44479153cc488730be6, type: 3}

@@ -16,6 +16,7 @@ namespace Core
         [SerializeField] private GamePopupsProvider _gamePopupsProvider;
         [SerializeField] private GameInstance _gameInstance;
         [SerializeField] private ProgressVisualizer _progressVisualizer;
+        [SerializeField] private EffectSpawner _effectSpawner;
 
         private void Awake()
         {
@@ -30,6 +31,7 @@ namespace Core
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
             serviceLocator.Register<IObjectPooler>(new ObjectPooler());
+            serviceLocator.Register<EffectSpawner>(_effectSpawner);
             serviceLocator.Register<VehicleSpawner>(new VehicleSpawner());
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
