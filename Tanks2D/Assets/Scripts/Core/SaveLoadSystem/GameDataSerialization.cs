@@ -1,7 +1,10 @@
+using System;
+using System.Linq;
 using Core.ServiceLocator;
 using Gameplay;
 using Gameplay.Attacking;
 using Gameplay.Enemy;
+using UnityEngine;
 
 namespace Core.SaveLoadSystem
 {
@@ -18,12 +21,15 @@ namespace Core.SaveLoadSystem
             _gameProgressor = Services.Get<GameProgressor>();
         }
 
-        public SaveData GetSaveDate()
+        public SaveData GetSaveData()
         {
             //level
             SaveData saveData = new SaveData
             {
-                LevelData = _gameProgressor.GetLevelSaveData()
+                Version = SaveData.CurrentVersion,
+                LevelData = _gameProgressor.GetLevelSaveData(),
+                Enemies = Array.Empty<EnemySaveData>(),
+                ProjectilesData = Array.Empty<ProjectileSaveData>()
             };
             
             //player
@@ -33,22 +39,10 @@ namespace Core.SaveLoadSystem
             }
 
             //enemy
-            saveData.Enemies = new EnemySaveData[_tanksRegister.ActiveTanks.Count];
-            int i = 0;
-            foreach (Vehicle vehicle in _tanksRegister.ActiveTanks)
-            {
-                saveData.Enemies[i] = GetEnemySaveData(vehicle);
-                i++;
-            }
+            saveData.Enemies = _tanksRegister.ActiveTanks.Select(GetEnemySaveData).ToArray();
             
             //projectile
-            saveData.ProjectilesData = new ProjectileSaveData[_projectileRegister.ActiveProjectile.Count];
-            i = 0;
-            foreach (BasicProjectile projectile in _projectileRegister.ActiveProjectile)
-            {
-                saveData.ProjectilesData[i] = GetProjectileSaveData(projectile);
-                i++;
-            }
+            saveData.ProjectilesData = _projectileRegister.ActiveProjectile.Select(GetProjectileSaveData).ToArray();
             
             return saveData;
         }
@@ -72,7 +66,8 @@ namespace Core.SaveLoadSystem
         private VehicleSaveData GetVehicleSaveData(Vehicle vehicle)
         {
             VehicleSaveData vehicleSaveData = new VehicleSaveData();
-            vehicleSaveData.Position = (vehicle.transform.position.x, vehicle.transform.position.y);
+            Vector3 position = vehicle.transform.position;
+            vehicleSaveData.Position = new SerializableVector2(position.x, position.y);
             vehicleSaveData.Rotation = new SerializableQuaternion(vehicle.transform.rotation);
             vehicleSaveData.VehicleType = vehicle.VehicleType;
             bool hasGun = vehicle.transform.TryGetComponent<BaseGun>(out BaseGun simpleGun);
@@ -80,7 +75,6 @@ namespace Core.SaveLoadSystem
             {
                 vehicleSaveData.GunSaveData = new GunSaveData()
                 {
-                    GunType = simpleGun.GetType(),
                     Data = simpleGun.GetGunSaveData()
                 };
             }
@@ -91,8 +85,10 @@ namespace Core.SaveLoadSystem
         private ProjectileSaveData GetProjectileSaveData(BasicProjectile projectile)
         {
             ProjectileSaveData projectileData = new ProjectileSaveData();
-            projectileData.Position = (projectile.transform.position.x, projectile.transform.position.y);
+            Vector3 position = projectile.transform.position;
+            projectileData.Position = new SerializableVector2(position.x, position.y);
             projectileData.Rotation = new SerializableQuaternion(projectile.transform.rotation);
+            projectileData.Team = projectile.Team;
             projectileData.ProjectileID = projectile.ProjectileID;
             projectileData.Lifetime = projectile.CurrentLifeTime;
             return projectileData;

@@ -2,11 +2,12 @@ using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Spawners;
+using Gameplay.UpdatingInstance;
 using UnityEngine;
 
 namespace Gameplay.Attacking
 {
-    public class BaseGun : MonoBehaviour
+    public class BaseGun : MonoBehaviour, IUpdatable
     {
         private float _fireCooldown = 0.2f;
 
@@ -14,19 +15,29 @@ namespace Gameplay.Attacking
         private IProjectileSpawner _projectileSpawner;
         private ProjectileID _projectileID;
         private Team _team;
+        private GameInstance _gameInstance;
+
+        public bool IgnorePause => false;
 
         public virtual void Init(float fireCooldown, ProjectileID projectileID, Team team)
         {
             _team = team;
             _projectileID = projectileID;
             _projectileSpawner = Services.Get<IProjectileSpawner>();
-            _fireCooldown = fireCooldown;
+            _gameInstance = Services.Get<GameInstance>();
+            _fireCooldown = Mathf.Max(0f, fireCooldown);
+            _gameInstance.TryAddNewUpdatable(this);
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-            if (_cooldown > 0)
-                _cooldown -= Time.deltaTime;
+            if (_gameInstance != null)
+                _gameInstance.AddToUnsubUpdate(this);
+        }
+
+        public void OnUpdate()
+        {
+            _cooldown = Mathf.Max(0f, _cooldown - Time.deltaTime);
         }
 
         public virtual void Fire()
@@ -54,7 +65,8 @@ namespace Gameplay.Attacking
 
         public void LoadData(SimpleGunSaveData data)
         {
-            _cooldown = data.Cooldawn;
+            if (data != null)
+                _cooldown = Mathf.Max(0f, data.Cooldawn);
         }
     }
 }

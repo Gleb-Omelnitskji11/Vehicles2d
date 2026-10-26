@@ -40,6 +40,11 @@ namespace Gameplay.Attacking
             StartDirection = transform.up;
         }
 
+        public void RestoreLifetime(float lifetime)
+        {
+            CurrentLifeTime = Mathf.Clamp(lifetime, 0f, _lifeTime);
+        }
+
         public virtual void ApplyHit(Vehicle tank)
         {
             Despawn();

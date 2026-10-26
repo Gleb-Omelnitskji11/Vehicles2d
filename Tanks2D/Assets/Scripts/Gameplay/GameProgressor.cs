@@ -76,6 +76,18 @@ namespace Gameplay
 
         public void LoadGame(SaveData saveData)
         {
+            if (saveData == null)
+            {
+                Debug.LogError("[GameProgressor] Cannot load save data: save data is empty.");
+                return;
+            }
+
+            if (!saveData.TryValidateAndNormalize(out string error))
+            {
+                Debug.LogError($"[GameProgressor] Cannot load save data: {error}");
+                return;
+            }
+
             //level
             _levelData = _levelLoader.LoadLevel(saveData.LevelData.LevelIndex);
             _enemiesLess = saveData.LevelData.EnemiesLess.ToList();
@@ -129,15 +141,15 @@ namespace Gameplay
             levelSaveData.EnemiesLess = _enemiesLess.ToArray();
             levelSaveData.LevelIndex = _levelData.Index;
             levelSaveData.NextEnemySpawners = new float[_timers.Count];
-            int j = 0;
+            List<float> timersData = new List<float>();
             for (int i = 0; i < _timers.Count; i++)
             {
                 if(_timers[i].IsRunning)
                 {
-                    levelSaveData.NextEnemySpawners[j] = _timers[i].Time;
-                    j++;
+                    timersData.Add(_timers[i].Time);
                 }
             }
+            levelSaveData.NextEnemySpawners =timersData.ToArray();
             return levelSaveData;
         }
 
@@ -150,7 +162,7 @@ namespace Gameplay
 
         private void LoadVehicle(VehicleSaveData vehicleData, Vehicle vehicle)
         {
-            vehicle.transform.position = new Vector2(vehicleData.Position.Item1, vehicleData.Position.Item2);
+            vehicle.transform.position = vehicleData.Position.ToVector2();
             vehicle.transform.rotation = vehicleData.Rotation.ToQuaternion();
 
             if (vehicle.TryGetComponent<BaseGun>(out BaseGun enemyGun) && vehicleData.GunSaveData != null)

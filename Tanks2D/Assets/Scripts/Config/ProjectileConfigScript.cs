@@ -6,10 +6,11 @@ using UnityEngine;
 namespace Config
 {
     [CreateAssetMenu(fileName = "ProjectileConfig", menuName = "Configs/ProjectileConfig")]
-    public class ProjectileConfigScript : ScriptableObject
+    public class ProjectileConfigScript : BaseConfigScript
     {
         [SerializeField] private ProjectileData[] _projectileData= new ProjectileData[1];
         [SerializeField] private HitEffectData[] _hitEffectData = new HitEffectData[1];
+        public override ConfigType Type => ConfigType.ProjectileConfig;
 
         public BasicProjectile GetProjectilePrefab(ProjectileID projectileID)
         {

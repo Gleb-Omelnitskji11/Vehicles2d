@@ -20,7 +20,8 @@ namespace Gameplay.Spawners
 
         public void Init()
         {
-            _projectileConfig = Services.Get<IConfigProvider>().ProjectileConfig;
+            _projectileConfig = Services.Get<IConfigProvider>()
+                .GetConfig<ProjectileConfigScript>(ConfigType.ProjectileConfig);
         }
 
         public void SpawnBulletHitEffect(Vector2 position, ProjectileID projectileID)

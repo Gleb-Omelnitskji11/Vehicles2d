@@ -59,26 +59,6 @@ namespace Core.ServiceLocator
                 throw new ArgumentNullException(nameof(service));
             }
 
-            // Auto-register for all implemented interfaces (excluding IService itself)
-            // var serviceType = service.GetType();
-            // var interfaces = serviceType.GetInterfaces();
-            //
-            // foreach (var interfaceType in interfaces)
-            // {
-            //     if (interfaceType == typeof(IService))
-            //     {
-            //         continue;
-            //     }
-            //
-            //     if (typeof(IService).IsAssignableFrom(interfaceType) && !_ignoreBindInterfaces.Contains(interfaceType))
-            //     {
-            //         if (!_services.TryAdd(interfaceType, service))
-            //         {
-            //             Debug.LogWarning($"Service {interfaceType.Name} is already registered.");
-            //         }
-            //     }
-            // }
-
             var concreteType = typeof(T);
             if (!_services.TryAdd(concreteType, service))
             {

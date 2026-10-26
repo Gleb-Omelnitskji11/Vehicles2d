@@ -5,9 +5,11 @@ using UnityEngine;
 namespace Config
 {
     [CreateAssetMenu(fileName = "VehicleConfig", menuName = "Configs/VehicleConfig")]
-    public class VehicleConfigScript : ScriptableObject
+    public class VehicleConfigScript : BaseConfigScript
     {
         [SerializeField] private VehicleData[] _vehicleData = new VehicleData[1];
+
+        public override ConfigType Type => ConfigType.VehicleConfig;
 
         public GameObject GetVehiclePrefab(VehicleType vehicleType)
         {

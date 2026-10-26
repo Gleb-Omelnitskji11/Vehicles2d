@@ -1,4 +1,5 @@
 using Core;
+using Core.SaveLoadSystem;
 using Core.ServiceLocator;
 using Enums;
 using Gameplay.Attacking;
@@ -12,12 +13,14 @@ namespace Gameplay.Spawners
         private VehicleSpawner _vehicleSpawner;
         protected TanksRegister VehicleRegister;
         private GameInstance _gameInstance;
+        private IPlayerLoadoutService _playerLoadout;
 
         public void Init()
         {
             VehicleRegister = Services.Get<TanksRegister>();
             _vehicleSpawner = Services.Get<VehicleSpawner>();
             _gameInstance = Services.Get<GameInstance>();
+            _playerLoadout = Services.Get<IPlayerLoadoutService>();
         }
 
         public Vehicle SpawnPlayer()
@@ -27,11 +30,12 @@ namespace Gameplay.Spawners
                 ClearOldPlayer();
             }
 
-            VehicleType vehicleType = VehicleType.Tank; //hardCode
+            VehicleType vehicleType = _playerLoadout.SelectedVehicle;
+            ProjectileID projectileID = _playerLoadout.SelectedProjectile;
             Vehicle player = _vehicleSpawner.SpawnVehicle(vehicleType, true);
             BaseGun gun = player.gameObject.AddComponent<BaseGun>(); //move to AttackFactory
             var playerMover = player.gameObject.AddComponent<PlayerMover>();
-            gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
+            gun.Init(1f, projectileID, Team.Ally);
 
             player.name = Constants.Player;
             player.tag = Constants.Player;

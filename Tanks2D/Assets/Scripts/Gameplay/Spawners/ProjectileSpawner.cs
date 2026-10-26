@@ -31,7 +31,7 @@ namespace Gameplay.Spawners
             _gameInstance = Services.Get<GameInstance>();
             _effectSpawner = Services.Get<EffectSpawner>();
             
-            _projectileConfig = configProvider.ProjectileConfig;
+            _projectileConfig = configProvider.GetConfig<ProjectileConfigScript>(ConfigType.ProjectileConfig);
             _projectileParent = new GameObject
             {
                 name = "ProjectileParent",
@@ -51,11 +51,12 @@ namespace Gameplay.Spawners
         {
             string key = GetKey(projectileData.ProjectileID);
             BasicProjectile projectile = _pooler.Get<BasicProjectile>(key);
-            projectile.transform.position = new Vector2(projectileData.Position.Item1, projectileData.Position.Item2);
+            projectile.transform.position = projectileData.Position.ToVector2();
             projectile.transform.rotation = projectileData.Rotation.ToQuaternion();
             
-            projectile.gameObject.SetActive(true);
             projectile.Init(projectileData.Team, projectileData.ProjectileID);
+            projectile.RestoreLifetime(projectileData.Lifetime);
+            projectile.gameObject.SetActive(true);
             return projectile;
         }
         

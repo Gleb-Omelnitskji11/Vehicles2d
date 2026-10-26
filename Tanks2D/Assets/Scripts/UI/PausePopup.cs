@@ -72,9 +72,15 @@ namespace UI
 
         private void Load()
         {
+            var data = _saveSystem.GetSaveData();
+            if (data == null)
+            {
+                UpdateLoadButton();
+                return;
+            }
+
             Close();
             _gameProgressor.Clear();
-            var data = _saveSystem.GetSaveData();
             _gameProgressor.LoadGame(data);
         }
 

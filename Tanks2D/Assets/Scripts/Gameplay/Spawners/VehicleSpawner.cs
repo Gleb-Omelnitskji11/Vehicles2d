@@ -28,7 +28,7 @@ namespace Gameplay
             var configProvider = Services.Get<IConfigProvider>();
             _pooler = Services.Get<IObjectPooler>();
 
-            _vehicleConfig = configProvider.VehicleConfig;
+            _vehicleConfig = configProvider.GetConfig<VehicleConfigScript>(ConfigType.VehicleConfig);
             CreatePools();
         }
 
@@ -48,7 +48,7 @@ namespace Gameplay
         {
             if (isPlayer)
             {
-                var prefab = _vehicleConfig.GetVehiclePrefab(VehicleType.Tank);
+                var prefab = _vehicleConfig.GetVehiclePrefab(vehicleType);
                 Vehicle player = Spawn(prefab);
                 SetTransform(player);
                 return player;
