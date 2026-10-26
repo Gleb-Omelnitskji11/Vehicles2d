@@ -19,7 +19,7 @@ namespace Gameplay
         private IPlayerSpawner _playerSpawner;
         private IEnemySpawner _enemySpawner;
         private TanksRegister _tankRegistry;
-        private GamePopupsProvider _gamePopupsProvider;
+        private IGamePopupsProvider _gamePopupsProvider;
         private ILevelLoader _levelLoader;
         private ProjectileRegister _projectileRegister;
 
@@ -41,7 +41,7 @@ namespace Gameplay
             _playerSpawner = Services.Get<IPlayerSpawner>();
             _enemySpawner = Services.Get<IEnemySpawner>();
             _tankRegistry = Services.Get<TanksRegister>();
-            _gamePopupsProvider = Services.Get<GamePopupsProvider>();
+            _gamePopupsProvider = Services.Get<IGamePopupsProvider>();
             _levelLoader = Services.Get<ILevelLoader>();
             _projectileRegister = Services.Get<ProjectileRegister>();
             _gameTimerService = Services.Get<GameTimerService>();
@@ -245,10 +245,13 @@ namespace Gameplay
 
         private void OnPlayerDie(Vehicle tank, bool byManual)
         {
-            if (byManual) return;
             GameStatus = GameStatus.NotStarted;
-            
             MatchResult = MatchResult.Lose;
+            if (byManual)
+            {
+                MonoBehaviour.Destroy(tank);
+                return;
+            }
             _gamePopupsProvider.TryOpen(PopupID.ResultPopup, true);
         }
     }

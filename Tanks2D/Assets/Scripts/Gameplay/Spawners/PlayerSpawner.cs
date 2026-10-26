@@ -30,7 +30,7 @@ namespace Gameplay.Spawners
             VehicleType vehicleType = VehicleType.Tank; //hardCode
             Vehicle player = _vehicleSpawner.SpawnVehicle(vehicleType, true);
             BaseGun gun = player.gameObject.AddComponent<BaseGun>(); //move to AttackFactory
-            var playerInput = player.gameObject.AddComponent<PlayerInput>();
+            var playerMover = player.gameObject.AddComponent<PlayerMover>();
             gun.Init(1f, ProjectileID.Bullet, Team.Ally); //hardCode
 
             player.name = Constants.Player;
@@ -39,14 +39,14 @@ namespace Gameplay.Spawners
 
             player.Init(new BasicUnitHealth(1), Team.Ally, vehicleType);
             VehicleRegister.RegisterPlayer(player);
-            _gameInstance.TryAddNewUpdatable(playerInput);
+            _gameInstance.TryAddNewUpdatable(playerMover);
 
             return player;
         }
 
         private void ClearOldPlayer()
         {
-            var input = VehicleRegister.Player.GetComponent<PlayerInput>();
+            var input = VehicleRegister.Player.GetComponent<PlayerMover>();
             Object.Destroy(VehicleRegister.Player.gameObject);
             _gameInstance.AddToUnsubUpdate(input);
             VehicleRegister.UnRegisterPlayer();

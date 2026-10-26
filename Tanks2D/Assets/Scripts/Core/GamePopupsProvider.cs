@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
-using Core.ServiceLocator;
 using Enums;
 using UI;
 using UnityEngine;
 
 namespace Core
 {
-    public class GamePopupsProvider : MonoBehaviour, IService
+    public class GamePopupsProvider : MonoBehaviour, IGamePopupsProvider
     {
         [SerializeField] private PopupData[] _popups = new PopupData[0];
 
@@ -72,6 +71,8 @@ namespace Core
             popup.popup.Open();
             return true;
         }
+        
+        public BasicPopup GetCurrentPopup() => _currentPopup;
 
         [Serializable]
         private class PopupData

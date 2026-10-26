@@ -27,6 +27,7 @@ namespace Core
             }
 
             serviceLocator.Register<GameInstance>(_gameInstance);
+            serviceLocator.Register<IGamePlayerInput>(new GamePlayerInput());
             serviceLocator.Register<MapLoader>(_mapLoader);
             serviceLocator.Register<TanksRegister>(new TanksRegister());
             serviceLocator.Register<ProjectileRegister>(new ProjectileRegister());
@@ -36,12 +37,13 @@ namespace Core
             serviceLocator.Register<IPlayerSpawner>(new PlayerSpawner());
             serviceLocator.Register<IEnemySpawner>(new EnemySpawner());
             serviceLocator.Register<IProjectileSpawner>(new ProjectileSpawner());
-            serviceLocator.Register<GamePopupsProvider>(_gamePopupsProvider);
+            serviceLocator.Register<IGamePopupsProvider>(_gamePopupsProvider);
             serviceLocator.Register<ILevelLoader>(new LevelLoader());
             serviceLocator.Register<GameTimerService>(new GameTimerService());
             serviceLocator.Register<ProgressVisualizer>(_progressVisualizer);
             serviceLocator.Register<GameProgressor>(new GameProgressor());
             serviceLocator.Register<GameDataSerialization>(new GameDataSerialization());
+            serviceLocator.Register<KeyHolder>(new KeyHolder());
 
             StartGame();
         }

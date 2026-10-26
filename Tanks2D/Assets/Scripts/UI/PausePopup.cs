@@ -17,7 +17,6 @@ namespace UI
         [SerializeField] private Button _loadButton;
         [SerializeField] private Button _quitButton;
         private GameProgressor _gameProgressor;
-        private GamePopupsProvider _gamePopupsProvider;
         private ISaveSystem _saveSystem;
 
         private void Awake()
@@ -32,24 +31,9 @@ namespace UI
         private void Start()
         {
             _gameProgressor = Services.Get<GameProgressor>();
-            _gamePopupsProvider = Services.Get<GamePopupsProvider>();
             _saveSystem = Services.Get<ISaveSystem>();
 
             UpdateLoadButton();
-        }
-
-        public void Update()
-        {
-            var  status = _gameProgressor.GameStatus;
-            if (status == GameStatus.NotStarted)
-                return;
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if(IsOpen)
-                    Resume();
-                else
-                    _gamePopupsProvider.TryOpen(PopupID.PausePopup);
-            }
         }
 
         public override void Open()

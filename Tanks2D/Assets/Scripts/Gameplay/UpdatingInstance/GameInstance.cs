@@ -23,6 +23,7 @@ namespace Gameplay.UpdatingInstance
         {
             UnsubOldUpdatable();
             RegisterNew();
+            
             for (int i = 0; i < _updatablesPauseIgnoring.Count; i++)
                 _updatablesPauseIgnoring[i].OnUpdate();
 

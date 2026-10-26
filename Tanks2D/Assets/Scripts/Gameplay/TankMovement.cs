@@ -1,5 +1,5 @@
-using System;
 using Core.ServiceLocator;
+using Enums;
 using Gameplay.UpdatingInstance;
 using UnityEngine;
 
@@ -13,6 +13,7 @@ namespace Gameplay
         private float _moveInput;
         private float _turnInput;
         private GameInstance _gameInstance;
+        private GameProgressor _gameProgressor;
 
         public bool IgnorePause { get; } = false;
 
@@ -20,6 +21,7 @@ namespace Gameplay
         {
             _gameInstance = Services.Get<GameInstance>();
             _gameInstance.TryAddNewUpdatable(this);
+            _gameProgressor = Services.Get<GameProgressor>();
         }
 
         private void OnDestroy()
