@@ -7,11 +7,10 @@ namespace Gameplay.UpdatingInstance
 {
     public class GameInstance : MonoBehaviour, IService
     {
-        public readonly List<IUpdatable> _updatables = new();
-        public readonly List<IUpdatable> _updatablesPauseIgnoring = new();
-        
-        public readonly List<IUpdatable> _newSubForRegister = new();
-        public readonly List<IUpdatable> _newSubForUnregister = new();
+        private readonly List<IUpdatable> _updatables = new();
+        private readonly List<IUpdatable> _updatablesPauseIgnoring = new();
+        private readonly List<IUpdatable> _newSubForRegister = new();
+        private readonly List<IUpdatable> _newSubForUnregister = new();
         private GameProgressor _gameProgressor;
 
         public void Start()
@@ -36,20 +35,27 @@ namespace Gameplay.UpdatingInstance
         
         public bool TryAddNewUpdatable(IUpdatable updatable)
         {
-            if (!_newSubForRegister.Contains(updatable))
-            {
-                _newSubForRegister.Add(updatable);
-                return true;
-            }
-            return false;
+            if (updatable == null)
+                return false;
+
+            _newSubForUnregister.Remove(updatable);
+            if (_updatables.Contains(updatable) || _updatablesPauseIgnoring.Contains(updatable) ||
+                _newSubForRegister.Contains(updatable))
+                return false;
+
+            _newSubForRegister.Add(updatable);
+            return true;
         }
 
         public void AddToUnsubUpdate(IUpdatable updatable)
         {
-            if (!_newSubForUnregister.Contains(updatable))
-            {
+            if (updatable == null)
+                return;
+
+            _newSubForRegister.Remove(updatable);
+            if ((_updatables.Contains(updatable) || _updatablesPauseIgnoring.Contains(updatable)) &&
+                !_newSubForUnregister.Contains(updatable))
                 _newSubForUnregister.Add(updatable);
-            }
         }
         
         private void RegisterNew()

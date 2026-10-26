@@ -31,8 +31,11 @@ namespace Gameplay
 
         private void OnDestroy()
         {
-            BasicUnitHealth.OnTakeDamage -= OnTakeDamage;
-            BasicUnitHealth.OnDeath -= OnDie;
+            if (BasicUnitHealth != null)
+            {
+                BasicUnitHealth.OnTakeDamage -= OnTakeDamage;
+                BasicUnitHealth.OnDeath -= OnDie;
+            }
 
             Died = null;
             TakenDamage = null;

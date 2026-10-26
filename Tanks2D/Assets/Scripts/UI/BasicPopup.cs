@@ -25,7 +25,7 @@ namespace UI
             _anim.onComplete += OnShown;
         }
 
-        protected void OnShown()
+        protected virtual void OnShown()
         {
             OnShow?.Invoke(this);
             CanvasGroup.interactable = true;
@@ -37,10 +37,15 @@ namespace UI
             if (_anim?.IsActive() ?? false)
                 return;
 
+            CanvasGroup.blocksRaycasts = false;
             _anim = CanvasGroup.DOFade(0f, _closeTime);
+            _anim.onComplete += OnClosed;
+        }
+        
+        protected virtual void OnClosed()
+        {
             Canvas.enabled = false;
             CanvasGroup.interactable = false;
-            CanvasGroup.blocksRaycasts = false;
 
             OnClose?.Invoke(this);
         }

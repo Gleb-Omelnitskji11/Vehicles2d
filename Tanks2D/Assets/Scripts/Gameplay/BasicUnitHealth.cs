@@ -10,11 +10,15 @@ namespace Gameplay
 
         public BasicUnitHealth(int maxHp)
         {
-            MaxHp = maxHp;
+            MaxHp = Mathf.Max(1, maxHp);
+            CurrentHp = MaxHp;
         }
 
         public void TakeDamage(int damage)
         {
+            if (damage <= 0 || CurrentHp <= 0)
+                return;
+
             CurrentHp = Mathf.Max(0, CurrentHp - damage);
 
             if (CurrentHp == 0)
@@ -34,7 +38,7 @@ namespace Gameplay
 
         public void Restore(int value)
         {
-            CurrentHp = Mathf.Min(MaxHp, value);
+            CurrentHp = Mathf.Clamp(value, 0, MaxHp);
         }
 
         public void ResetData()

@@ -15,12 +15,18 @@ namespace Core
         public async UniTask LoadConfigAsync()
         {
             _configs.Clear();
+            List<ConfigType> missingConfigs = new List<ConfigType>();
             foreach (ConfigType type in Enum.GetValues(typeof(ConfigType)))
             {
                 BaseConfigScript config = await BaseConfigScript.LoadAsync(type);
                 if (config != null)
                     _configs[type] = config;
+                else
+                    missingConfigs.Add(type);
             }
+
+            if (missingConfigs.Count > 0)
+                throw new InvalidOperationException($"Required configs failed to load: {string.Join(", ", missingConfigs)}.");
         }
 
         public T GetConfig<T>(ConfigType type) where T : BaseConfigScript

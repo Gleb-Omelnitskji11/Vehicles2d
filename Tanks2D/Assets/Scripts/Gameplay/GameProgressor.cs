@@ -140,7 +140,6 @@ namespace Gameplay
             LevelSaveData levelSaveData = new LevelSaveData();
             levelSaveData.EnemiesLess = _enemiesLess.ToArray();
             levelSaveData.LevelIndex = _levelData.Index;
-            levelSaveData.NextEnemySpawners = new float[_timers.Count];
             List<float> timersData = new List<float>();
             for (int i = 0; i < _timers.Count; i++)
             {
@@ -149,7 +148,7 @@ namespace Gameplay
                     timersData.Add(_timers[i].Time);
                 }
             }
-            levelSaveData.NextEnemySpawners =timersData.ToArray();
+            levelSaveData.NextEnemySpawners = timersData.ToArray();
             return levelSaveData;
         }
 
@@ -179,16 +178,15 @@ namespace Gameplay
             }
         }
 
-        private void SpawnNewEnemies()
+        private void SpawnNewEnemies(Timer.Timer completedTimer)
         {
             if (_enemiesCount < _levelData.EnemiesMax && _enemiesLess.Count > 0)
             {
                 SpawnEnemy();
             }
 
-            var timer = _timers[0];
-            _timers.RemoveAt(0);
-            _gameInstance.AddToUnsubUpdate(timer);
+            _timers.Remove(completedTimer);
+            _gameInstance.AddToUnsubUpdate(completedTimer);
         }
 
         private void SpawnEnemy()
@@ -227,7 +225,8 @@ namespace Gameplay
 
         private void CreateSpawnEnemyTimer(float time)
         {
-            var timer = _gameTimerService.AwaitGameOperation(time, SpawnNewEnemies);
+            Timer.Timer timer = null;
+            timer = _gameTimerService.AwaitGameOperation(time, () => SpawnNewEnemies(timer));
             _timers.Add(timer);
             _gameInstance.TryAddNewUpdatable(timer);
         }
@@ -249,6 +248,7 @@ namespace Gameplay
             foreach (var timer in _timers)
             {
                 timer.Cancel();
+                _gameInstance.AddToUnsubUpdate(timer);
             }
 
             _timers.Clear();

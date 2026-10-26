@@ -20,8 +20,8 @@ namespace Gameplay.Attacking
         {
             if (collision.gameObject.tag.Equals("Wall"))
             {
-                OnHit?.Invoke(collision.ClosestPoint(transform.position), ProjectileID);
                 Despawn();
+                OnHit?.Invoke(collision.ClosestPoint(transform.position), ProjectileID);
             }
         }
 

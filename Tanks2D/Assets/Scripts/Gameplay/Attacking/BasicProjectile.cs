@@ -59,6 +59,8 @@ namespace Gameplay.Attacking
 
         public virtual void Despawn()
         {
+            if (!gameObject.activeInHierarchy)
+                return;
             _gameInstance.AddToUnsubUpdate(this);
             gameObject.SetActive(false);
             Deactivated?.Invoke(this, true);

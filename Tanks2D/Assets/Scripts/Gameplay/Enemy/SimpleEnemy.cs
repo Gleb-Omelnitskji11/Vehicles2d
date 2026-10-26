@@ -38,7 +38,7 @@ namespace Gameplay.Enemy
         private bool _avoiding;
         private bool _backward;
         private bool _chasingPlayer;
-        private PlayerFinder _playerFinder;
+        private IPlayerFinder _playerFinder;
 
         private const float BackwardSpeed = 0.4f;
         public override EnemyType EnemyType => _enemyType;
@@ -162,15 +162,7 @@ namespace Gameplay.Enemy
 
         protected override void OnCollision(Collision2D collision)
         {
-            GameObject obj = collision.gameObject;
-            if (obj.CompareTag(Constants.Player))
-            {
-                if (collision.gameObject.TryGetComponent<Vehicle>(out var player))
-                {
-                    player.BasicUnitHealth.TakeLethalDamage();
-                    Reset();
-                }
-            }
+            base.OnCollision(collision);
 
             if(!_chasingPlayer)
             {

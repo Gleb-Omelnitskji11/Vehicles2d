@@ -16,8 +16,15 @@ namespace Core
 
         private async void Preloading()
         {
-            await Binding();
-            LoadNextScene();
+            try
+            {
+                await Binding();
+                LoadNextScene();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[EntryBootstrap] Preloading failed. The game scene was not loaded.\n{exception}");
+            }
         }
 
         private async UniTask Binding()

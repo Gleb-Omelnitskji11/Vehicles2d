@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Enemy
 {
-    public class PlayerFinder
+    public class PlayerFinder : IPlayerFinder
     {
         private TanksRegister _tanksRegister;
         private LayerMask _obstacleMask;

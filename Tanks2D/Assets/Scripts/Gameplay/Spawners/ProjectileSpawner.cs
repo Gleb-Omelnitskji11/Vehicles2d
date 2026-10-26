@@ -121,7 +121,7 @@ namespace Gameplay.Spawners
             var projectile = Object.Instantiate(prefab, _projectileParent.transform);
             projectile.tag = Constants.Projectile;
             projectile.gameObject.layer = LayerMask.NameToLayer(Constants.Projectile);
-            _projectileRegister.RegisterProjectile(projectile);
+            //_projectileRegister.RegisterProjectile(projectile);
             return projectile;
         }
         
