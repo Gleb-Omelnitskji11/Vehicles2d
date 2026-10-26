@@ -55,8 +55,8 @@ namespace UI
         
         private void Restart()
         {
-            _gameProgressor.RepeatGame();
             Close();
+            _gameProgressor.RepeatGame();
         }
 
         private void Save()
