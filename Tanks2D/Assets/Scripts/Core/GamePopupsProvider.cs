@@ -42,8 +42,8 @@ namespace Core
 
         private void BlockCursor()
         {
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         public bool TryOpen(PopupID popupID, bool force = false)

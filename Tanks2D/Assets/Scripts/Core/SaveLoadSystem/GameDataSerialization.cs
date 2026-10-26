@@ -64,8 +64,8 @@ namespace Core.SaveLoadSystem
         {
             EnemySaveData vehicleSaveData = new EnemySaveData();
             vehicleSaveData.VehicleSaveData = GetVehicleSaveData(vehicle);
-            if(vehicle.TryGetComponent<SimpleEnemy>(out SimpleEnemy simpleEnemy))
-                vehicleSaveData.EnemyType = simpleEnemy.EnemyType;
+            if(vehicle.TryGetComponent<BaseEnemy>(out BaseEnemy baseEnemy))
+                vehicleSaveData.EnemyType = baseEnemy.EnemyType;
             return vehicleSaveData;
         }
 

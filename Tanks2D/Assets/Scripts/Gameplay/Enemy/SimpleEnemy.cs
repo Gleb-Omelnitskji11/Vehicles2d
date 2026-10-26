@@ -1,13 +1,11 @@
 using Core;
 using Enums;
-using Gameplay.UpdatingInstance;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Gameplay.Enemy
 {
-    [RequireComponent(typeof(VehicleMovement))]
-    public class SimpleEnemy : MonoBehaviour, IUpdatable
+    public class SimpleEnemy : BaseEnemy
     {
         [Header("Direction")]
         [SerializeField] private float _minDirectionChangeTime = 2f;
@@ -43,8 +41,7 @@ namespace Gameplay.Enemy
         private PlayerFinder _playerFinder;
 
         private const float BackwardSpeed = 0.4f;
-        public virtual EnemyType EnemyType => _enemyType;
-        public bool IgnorePause { get; } = false;
+        public override EnemyType EnemyType => _enemyType;
 
         private void Awake()
         {
@@ -74,9 +71,8 @@ namespace Gameplay.Enemy
             Vehicle tank = GetComponent<Vehicle>();
             tank.OnCollision += OnCollision;
         }
-
-
-        public void OnUpdate()
+        
+        public override void OnUpdate()
         {
             _chasingPlayer = _playerFinder.TryFind(ref _player);
 
@@ -135,7 +131,7 @@ namespace Gameplay.Enemy
             }
         }
 
-        private void LoseTarget()
+        protected override void Reset()
         {
             _chasingPlayer = false;
             _player = null;
@@ -164,7 +160,7 @@ namespace Gameplay.Enemy
             _movement.Move(move, -turn);
         }
 
-        private void OnCollision(Collision2D collision)
+        protected override void OnCollision(Collision2D collision)
         {
             GameObject obj = collision.gameObject;
             if (obj.CompareTag(Constants.Player))
@@ -172,7 +168,7 @@ namespace Gameplay.Enemy
                 if (collision.gameObject.TryGetComponent<Vehicle>(out var player))
                 {
                     player.BasicUnitHealth.TakeLethalDamage();
-                    LoseTarget();
+                    Reset();
                 }
             }
 
